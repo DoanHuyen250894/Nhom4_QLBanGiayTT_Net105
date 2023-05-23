@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AppAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]")]//
     [ApiController]
     public class ImageController : ControllerBase
     {
