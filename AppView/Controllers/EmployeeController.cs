@@ -56,6 +56,12 @@ namespace AppView.Controllers
         public IActionResult UpdateEmployee(Guid id)
         {
             Employee employee = _repos.GetAll().FirstOrDefault(c => c.EmployeeID == id);
+            using (ShopDBContext shopDBContext = new ShopDBContext())
+            {
+                var role = shopDBContext.Roles.ToList();
+                SelectList selectListRole = new SelectList(role, "RoleID", "RoleName");
+                ViewBag.RoleList = selectListRole;
+            }
             return View(employee);
         }
         public IActionResult UpdateEmployee(Employee employee)
