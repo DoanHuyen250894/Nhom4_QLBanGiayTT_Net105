@@ -48,7 +48,7 @@ namespace AppView.Controllers
 			// Cập nhật thông tin từ apiData vào đối tượng customer
 			var newStyle = JsonConvert.DeserializeObject<Style>(apiData);
 			repos.AddItem(style);
-			return RedirectToAction("GetAllCustomer");
+			return RedirectToAction("GetAllStyles");
 		}
 
 		[HttpGet]
@@ -63,7 +63,7 @@ namespace AppView.Controllers
 		{
 			if (repos.EditItem(style))
 			{
-				return RedirectToAction("GetAllCustomer");
+				return RedirectToAction("GetAllStyles");
 			}
 			else return BadRequest();
 		}
@@ -73,7 +73,7 @@ namespace AppView.Controllers
 			var style = repos.GetAll().First(c => c.StyleID == id);
 			if (repos.RemoveItem(style))
 			{
-				return RedirectToAction("GetAllCustomer");
+				return RedirectToAction("GetAllStyles");
 			}
 			else return Content("Error");
 		}

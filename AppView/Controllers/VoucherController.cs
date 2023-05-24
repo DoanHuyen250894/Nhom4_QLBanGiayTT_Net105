@@ -48,7 +48,7 @@ namespace AppView.Controllers
 			// Cập nhật thông tin từ apiData vào đối tượng customer
 			var newStyle = JsonConvert.DeserializeObject<Voucher>(apiData);
 			repos.AddItem(voucher);
-			return RedirectToAction("GetAllCustomer");
+			return RedirectToAction("GetAllVouchers");
 		}
 
 		[HttpGet]
@@ -63,7 +63,7 @@ namespace AppView.Controllers
 		{
 			if (repos.EditItem(voucher))
 			{
-				return RedirectToAction("GetAllCustomer");
+				return RedirectToAction("GetAllVouchers");
 			}
 			else return BadRequest();
 		}
@@ -73,7 +73,7 @@ namespace AppView.Controllers
 			var voucher = repos.GetAll().First(c => c.VoucherID == id);
 			if (repos.RemoveItem(voucher))
 			{
-				return RedirectToAction("GetAllCustomer");
+				return RedirectToAction("GetAllVouchers");
 			}
 			else return Content("Error");
 		}
