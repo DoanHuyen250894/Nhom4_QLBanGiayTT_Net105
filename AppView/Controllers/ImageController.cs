@@ -46,32 +46,57 @@ namespace AppView.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Create(Image im, [Bind] IFormFile imageFile)
+        public async Task<IActionResult> Create(Image image, [Bind(Prefix = "imageFile1")] IFormFile imageFile1, [Bind(Prefix = "imageFile2")] IFormFile imageFile2, [Bind(Prefix = "imageFile3")] IFormFile imageFile3, [Bind(Prefix = "imageFile4")] IFormFile imageFile4)
         {
-            var x = imageFile.FileName; // debug
-            if (imageFile != null && imageFile.Length > 0)//Khoong null và không trống
+            if (imageFile1 != null && imageFile1.Length > 0) // Kiểm tra tệp tin ảnh 1
             {
-                // Trỏ tới thư mục wroot để lát nữa thực hiện việc copy sang
-                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "image", imageFile.FileName);
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "image", imageFile1.FileName);
                 using (var stream = new FileStream(path, FileMode.Create))
                 {
-                    // Thực hiện copy ảnh chọn sang thư mục wwwrooot
-                    imageFile.CopyTo(stream);
+                    await imageFile1.CopyToAsync(stream);
                 }
-                // Gán lại giá trị  cho image của đối tượng bằng tên file ảnh đã đc sao chép
-                im.Image1 = imageFile.FileName;
-                im.Image2 = imageFile.FileName;
-                im.Image3 = imageFile.FileName;
-                im.Image4 = imageFile.FileName;
+                image.Image1 = imageFile1.FileName;
             }
 
-            if (_repos.AddItem(im))
+            if (imageFile2 != null && imageFile2.Length > 0) // Kiểm tra tệp tin ảnh 2
+            {
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "image", imageFile2.FileName);
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    await imageFile2.CopyToAsync(stream);
+                }
+                image.Image2 = imageFile2.FileName;
+            }
+
+            if (imageFile3 != null && imageFile3.Length > 0) // Kiểm tra tệp tin ảnh 3
+            {
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "image", imageFile3.FileName);
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    await imageFile3.CopyToAsync(stream);
+                }
+                image.Image3 = imageFile3.FileName;
+            }
+
+            if (imageFile4 != null && imageFile4.Length > 0) // Kiểm tra tệp tin ảnh 4
+            {
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "image", imageFile4.FileName);
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    await imageFile4.CopyToAsync(stream);
+                }
+                image.Image4 = imageFile4.FileName;
+            }
+
+            if (_repos.AddItem(image))
             {
                 return RedirectToAction("GetAllImge");
             }
-            else return BadRequest();
+            else
+            {
+                return BadRequest();
+            }
         }
-
         [HttpGet]
         public IActionResult Edit(Guid id)
         {

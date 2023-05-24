@@ -2,9 +2,9 @@
 
 @{
     ViewData["Title"] = "GetAllImge";
-     List<string> extensions = new List<string>()
+    List<string> extensions = new List<string>()
     {
-        ".png", ".jpg", ".jpeg", ".gif", ".pdf", ".raw", ".bmp", ".tif", ".jfif"
+        ".png", ".jpg", ".jpeg", ".gif", ".pdf", ".raw", ".bmp", ".tif"
     };
 }
 
@@ -53,54 +53,56 @@
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                    @{
-                        string a = System.IO.Path.GetExtension(item.Image1);
-                    }
-                    @if (@extensions.Contains(System.IO.Path.GetExtension(item.Image1).Trim()))
-                    {
-                        <img src="/image/@item.Image1" height="100">
-                    }
-                    else
-                    {
-                        <span>Ảnh lỗi rồi :))</span>
-                    }
+               @{
+                   string a = System.IO.Path.GetExtension(item.Image1);
+               }
+               @if (@extensions.Contains(System.IO.Path.GetExtension(item.Image1).Trim()))
+               {
+                   <img src="/image/@item.Image1" height="100">
+               }
+               else
+               {
+                   <span>Ảnh lỗi rồi =)))</span>
+               }
             </td>
             <td>
-                    @{
-                        string b = System.IO.Path.GetExtension(item.Image2);
-                    }
-                    @if (@extensions.Contains(System.IO.Path.GetExtension(item.Image2).Trim()))
-                    {
-                        <img src="/image/@item.Image2" height="100">
-                    }
-                    else
-                    {
-                        <span>Ảnh lỗi rồi :))</span>
-                    }
+                @{
+                    string b = System.IO.Path.GetExtension(item.Image2);
+                }
+                @if (@extensions.Contains(System.IO.Path.GetExtension(item.Image2).Trim()))
+                {
+                    <img src="/image/@item.Image2" height="100">
+                }
+                else
+                {
+                    <span>Ảnh lỗi rồi =)))</span>
+                }
             </td>
             <td>
-                   @{string c = System.IO.Path.GetExtension(item.Image3);}
-                    @if (@extensions.Contains(System.IO.Path.GetExtension(item.Image3).Trim()))
-                    {
-                        <img src="/image/@item.Image3" height="100">
-                    }
-                    else
-                    {
-                        <span>Ảnh lỗi rồi :))</span>                       
-                    }
+                @{
+                    string c = System.IO.Path.GetExtension(item.Image3);
+                }
+                @if (@extensions.Contains(System.IO.Path.GetExtension(item.Image3).Trim()))
+                {
+                    <img src="/image/@item.Image3" height="100">
+                }
+                else
+                {
+                    <span>Ảnh lỗi rồi =)))</span>
+                }
             </td>
             <td>
-                    @{
-                        string d = System.IO.Path.GetExtension(item.Image4);
-                    }
-                    @if (@extensions.Contains(System.IO.Path.GetExtension(item.Image4).Trim()))
-                    {
-                        <img src="/image/@item.Image4" height="100">
-                    }
-                    else
-                    {
-                        <span>Ảnh lỗi rồi :))</span>
-                    }
+                @{
+                    string d = System.IO.Path.GetExtension(item.Image4);
+                }
+                @if (@extensions.Contains(System.IO.Path.GetExtension(item.Image4).Trim()))
+                {
+                    <img src="/image/@item.Image4" height="100">
+                }
+                else
+                {
+                    <span>Ảnh lỗi rồi =)))</span>
+                }
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Status)
