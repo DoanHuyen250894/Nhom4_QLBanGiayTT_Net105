@@ -158,5 +158,15 @@ namespace AppView.Controllers
             }
             else return BadRequest();
         }
+
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            Image img = _repos.GetAll().FirstOrDefault(c => c.ImageID == id);
+            if (_repos.RemoveItem(img))
+            {
+                return RedirectToAction("GetAllImge");
+            }
+            else return BadRequest();
+        }
     }
 }
