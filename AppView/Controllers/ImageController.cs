@@ -145,7 +145,7 @@ namespace AppView.Controllers
             if (imageFile4 != null && imageFile4.Length > 0) // Kiểm tra tệp tin ảnh 4
             {
                 var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "image", imageFile4.FileName);
-                using (var stream = new FileStream(path, FileMode.Create))
+                using (var stream = new FileStream(path, FileMode.Create))//
                 {
                     await imageFile4.CopyToAsync(stream);
                 }
