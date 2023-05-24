@@ -41,7 +41,7 @@ namespace AppView.Controllers
 		[HttpPost]
 		public async Task<IActionResult> CreateVoucher(Voucher voucher)
 		{
-			string apiUrl = $"https://localhost:7036/api/Customer/create-customer?code={voucher.VoucherCode}&status={voucher.Status}&value={voucher.VoucherValue}&maxUse={voucher.MaxUsage}&remainUse={voucher.RemainingUsage}&expireDate={voucher.ExpirationDate}";
+			string apiUrl = $"https://localhost:7036/api/Customer/create-voucher?code={voucher.VoucherCode}&status={voucher.Status}&value={voucher.VoucherValue}&maxUse={voucher.MaxUsage}&remainUse={voucher.RemainingUsage}&expireDate={voucher.ExpirationDate}";
 			var httpClient = new HttpClient();
 			var response = await httpClient.GetAsync(apiUrl);
 			string apiData = await response.Content.ReadAsStringAsync();

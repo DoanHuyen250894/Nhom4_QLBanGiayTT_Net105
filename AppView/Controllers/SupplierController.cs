@@ -41,7 +41,7 @@ namespace AppView.Controllers
 		[HttpPost]
 		public async Task<IActionResult> CreateSupplier(Supplier supplier)
 		{
-			string apiUrl = $"https://localhost:7036/api/Customer/create-customer?name={supplier.Name}&status={supplier.Status}";
+			string apiUrl = $"https://localhost:7036/api/Customer/create-supplier?name={supplier.Name}&status={supplier.Status}";
 			var httpClient = new HttpClient();
 			var response = await httpClient.GetAsync(apiUrl);
 			string apiData = await response.Content.ReadAsStringAsync();

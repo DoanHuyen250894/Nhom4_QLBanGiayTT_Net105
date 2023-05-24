@@ -41,7 +41,7 @@ namespace AppView.Controllers
 		[HttpPost]
 		public async Task<IActionResult> CreateStyle(Style style)
 		{
-			string apiUrl = $"https://localhost:7036/api/Customer/create-customer?name={style.Name}&status={style.Status}";
+			string apiUrl = $"https://localhost:7036/api/Customer/create-style?name={style.Name}&status={style.Status}";
 			var httpClient = new HttpClient();
 			var response = await httpClient.GetAsync(apiUrl);
 			string apiData = await response.Content.ReadAsStringAsync();
