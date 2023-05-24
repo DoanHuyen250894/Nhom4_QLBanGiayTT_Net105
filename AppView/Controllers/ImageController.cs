@@ -100,12 +100,69 @@ namespace AppView.Controllers
         [HttpGet]
         public IActionResult Edit(Guid id)
         {
+
             Image image = _repos.GetAll().FirstOrDefault(c => c.ImageID == id);
+            using (ShopDBContext shopDBContext = new ShopDBContext())
+            {
+                var shoes = shopDBContext.ShoesDetails.ToList();
+                SelectList selectListShoesDT = new SelectList(shoes, "ShoesDetailsId", "ShoesDetailsId");
+                ViewBag.ShoesDTList = selectListShoesDT;
+            }
             return View(image);
         }
-        public IActionResult Edit(Image image)
+        public async Task<IActionResult> Edit(Image image,  [Bind(Prefix = "imageFile1")] IFormFile imageFile1, [Bind(Prefix = "imageFile2")] IFormFile imageFile2, [Bind(Prefix = "imageFile3")] IFormFile imageFile3, [Bind(Prefix = "imageFile4")] IFormFile imageFile4)
         {
+            if (imageFile1 != null && imageFile1.Length > 0) // Kiểm tra tệp tin ảnh 1
+            {
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "image", imageFile1.FileName);
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    await imageFile1.CopyToAsync(stream);
+                }
+                image.Image1 = imageFile1.FileName;
+            }
+
+            if (imageFile2 != null && imageFile2.Length > 0) // Kiểm tra tệp tin ảnh 2
+            {
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "image", imageFile2.FileName);
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    await imageFile2.CopyToAsync(stream);
+                }
+                image.Image2 = imageFile2.FileName;
+            }
+
+            if (imageFile3 != null && imageFile3.Length > 0) // Kiểm tra tệp tin ảnh 3
+            {
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "image", imageFile3.FileName);
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    await imageFile3.CopyToAsync(stream);
+                }
+                image.Image3 = imageFile3.FileName;
+            }
+
+            if (imageFile4 != null && imageFile4.Length > 0) // Kiểm tra tệp tin ảnh 4
+            {
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "image", imageFile4.FileName);
+                using (var stream = new FileStream(path, FileMode.Create))//
+                {
+                    await imageFile4.CopyToAsync(stream);
+                }
+                image.Image4 = imageFile4.FileName;
+            }
+
             if (_repos.EditItem(image))
+            {
+                return RedirectToAction("GetAllImge");
+            }
+            else return BadRequest();
+        }
+
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            Image img = _repos.GetAll().FirstOrDefault(c => c.ImageID == id);
+            if (_repos.RemoveItem(img))
             {
                 return RedirectToAction("GetAllImge");
             }
