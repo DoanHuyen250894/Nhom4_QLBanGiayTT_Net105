@@ -1,7 +1,7 @@
-﻿@model AppData.Models.Employee
+﻿@model AppData.Models.Role
 
 @{
-    ViewData["Title"] = "UpdateEmployee";
+    ViewData["Title"] = "EditRole";
 }
 <link rel="stylesheet" href="~/css/FormInput.css">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -23,47 +23,23 @@
                                     get first <br> access to the very best of Nike products, inspiration <br> and
                                     community.
                                 </p>
-                                <form asp-action="UpdateEmployee" style="margin-top:10px;" id="register-form">
+                                <form asp-action="EditCustomer" style="margin-top:10px;" id="register-form">
                                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                     <div class="form-floating mb-3" style="display:none;">
-                                        <input asp-for="EmployeeID" type="text" class="form-control" placeholder="EmployeeID" required>
-                                        <label for="floatingInputEmail">EmployeeID</label>
-                                        <span asp-validation-for="EmployeeID" class="text-danger"></span>
+                                        <input asp-for="RoleID" type="text" class="form-control" placeholder="RoleID" required>
+                                        <label for="floatingInputEmail">RoleID</label>
+                                        <span asp-validation-for="RoleName" class="text-danger"></span>
                                     </div>
                                     <div class="form-floating mb-3">
-                                        <input asp-for="FullName" type="text" class="form-control" placeholder="FullName" required>
-                                        <label for="floatingInputEmail">FullName</label>
-                                        <span asp-validation-for="FullName" class="text-danger"></span>
+                                        <input asp-for="RoleName" type="text" class="form-control" placeholder="RoleName" required>
+                                        <label for="floatingInputEmail">RoleName</label>
+                                        <span asp-validation-for="RoleName" class="text-danger"></span>
                                     </div>
-                                    <div class="form-floating mb-3">
-                                        <input asp-for="Password" type="password" class="form-control" placeholder="Password" required>
-                                        <label for="floatingInputEmail">Password</label>
-                                        <span asp-validation-for="Password" class="text-danger"></span>
-                                    </div>
-                                    <div class="form-floating mb-3">
-                                        <input asp-for="Email" type="text" class="form-control" placeholder="Email" required>
-                                        <label for="floatingInputEmail">Email address</label>
-                                        <span asp-validation-for="Email" class="text-danger"></span>
-                                    </div>
-                                    <div class="form-floating mb-3">
-                                        <input asp-for="Sex" type="number" class="form-control" placeholder="Sex" required>
-                                        <label for="floatingInputEmail">Sex</label>
-                                        <span asp-validation-for="Sex" class="text-danger"></span>
-                                    </div>
-                                    <div class="form-floating mb-3">
-                                        <input asp-for="PhoneNumber" type="number" class="form-control" placeholder="PhoneNumber" required>
-                                        <label for="floatingInputEmail">PhoneNumber</label>
-                                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-                                    </div>
+                                    
                                     <div class="form-floating mb-3">
                                         <input asp-for="Status" type="number" class="form-control" placeholder="Status" required>
                                         <label for="floatingInputEmail">Status</label>
                                         <span asp-validation-for="Status" class="text-danger"></span>
-                                    </div>
-                                    <div class="form-floating mb-3">
-                                        <select asp-for="RoleID" class="form-control" asp-items="@ViewBag.RoleList"></select>
-                                        <label for="floatingInputEmail">Role</label>
-                                        <span asp-validation-for="Role" class="text-danger"></span>
                                     </div>
                                     @*                                    <div class="form-check d-flex justify-content-center mb-5">
                                     <input class="form-check-input me-2" type="checkbox" value="" id="form2Example3cg" name="AgreeToTerms" checked />

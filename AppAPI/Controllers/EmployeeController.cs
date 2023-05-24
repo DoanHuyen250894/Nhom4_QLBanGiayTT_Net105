@@ -37,7 +37,7 @@ namespace AppAPI.Controllers
 
         // POST api/<EmployeeController>
         [HttpPost("create-employee")]
-        public string CreateCustomer(string FullName, string Password, string Email, int Sex, string PhoneNumber, int Status, Guid RoleID)
+        public string CreateEmployee(string FullName, string Password, string Email, int Sex, string PhoneNumber, int Status, Guid RoleID)
         {
             Employee employee = new Employee();
             employee.FullName = FullName;

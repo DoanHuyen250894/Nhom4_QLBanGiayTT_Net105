@@ -30,6 +30,7 @@ namespace AppView.Controllers
             var customer = JsonConvert.DeserializeObject<List<Customer>>(apiData);
             return View(customer);
         }
+        [HttpGet]
         public async Task<IActionResult> CreateCustomer()
         {
             return View();
