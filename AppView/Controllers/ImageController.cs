@@ -95,7 +95,7 @@ namespace AppView.Controllers
             else
             {
                 return BadRequest();
-            }*/
+            }*////
             var httpClient = new HttpClient();
             string apiUrl = $"https://localhost:7036/api/Image/Create-Image?Name={image.Name}&Image1={image.Image1}&Image2={image.Image2}&Image3={image.Image3}&Image4={image.Image4}&Status={image.Status}&ShoesDetailsID={image.ShoesDetailsID}";
             var response = await httpClient.PostAsync(apiUrl, null);

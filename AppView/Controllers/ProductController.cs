@@ -53,7 +53,7 @@ namespace AppView.Controllers
 
               var pro = JsonConvert.DeserializeObject<Product>(apiData);*/
             /*  _repos.AddItem(product);
-              return RedirectToAction("GetAllProduct");*/
+              return RedirectToAction("GetAllProduct");*///
             var httpClient = new HttpClient();
             string apiUrl = $"https://localhost:7036/api/Product/Create-Product?Name={product.Name}&Status={product.Status}";
             var response = await httpClient.PostAsync(apiUrl, null);
