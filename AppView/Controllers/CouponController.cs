@@ -40,33 +40,50 @@ namespace AppView.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCoupon(Coupon coupon)
         {
-            _repos.AddItem(coupon);
+            var httpClient = new HttpClient();
+            string apiUrl = $"https://localhost:7036/api/Coupon/create-coupon?Couponcode={coupon.CouponCode}&CouponValue={coupon.CouponValue}&MaxUsage={coupon.MaxUsage}&RemainingUsage={coupon.RemainingUsage}&ExpirationDate={coupon.ExpirationDate}&Status={coupon.Status}";
+            var response = await httpClient.PostAsync(apiUrl, null);
             return RedirectToAction("GetAllCoupon");
         }
 
         [HttpGet]
-        public IActionResult EditCoupon(Guid id) // Khi ấn vào Create thì hiển thị View
+        public async Task<IActionResult> EditCoupon(Guid id) // Khi ấn vào Create thì hiển thị View
         {
             // Lấy Product từ database dựa theo id truyền vào từ route
             Coupon coupon = _repos.GetAll().FirstOrDefault(c => c.CouponID == id);
             return View(coupon);
         }
-        public IActionResult EditCoupon(Coupon coupon) // Thực hiện việc Tạo mới
+        public async Task<IActionResult> EditCoupon(Coupon coupon) // Thực hiện việc Tạo mới
         {
-            if (_repos.EditItem(coupon))
-            {
-                return RedirectToAction("GetAllCoupon");
-            }
-            else return BadRequest();
+            var httpClient = new HttpClient();
+            string apiUrl = $"https://localhost:7036/api/Coupon/update-coupon?CouponID={coupon.CouponID}&CouponCode={coupon.CouponCode}&CouponValue={coupon.CouponValue}&MaxUsage={coupon.MaxUsage}&RemainingUsage={coupon.RemainingUsage}&ExpirationDate={coupon.ExpirationDate}&status={coupon.Status}";
+            var response = await httpClient.PutAsync(apiUrl, null);
+            return RedirectToAction("GetAllCoupon");
+
+            
+            //if (_repos.EditItem(coupon))
+            //{
+            //    return RedirectToAction("GetAllCoupon");
+            //}
+            //else return BadRequest();
         }
-        public IActionResult DeleteCoupon(Guid id)
+        public async Task<IActionResult> DeleteCoupon(Guid id)
         {
-            var coup = _repos.GetAll().First(c => c.CouponID == id);
-            if (_repos.RemoveItem(coup))
-            {
-                return RedirectToAction("GetAllCoupon");
-            }
-            else return Content("Error");
+            var cos = _repos.GetAll().First(c => c.CouponID == id);
+            var httpClient = new HttpClient();
+            string apiUrl = $"https://localhost:7036/api/Coupon/delete-coupon?id={id}";
+            var response = await httpClient.DeleteAsync(apiUrl);
+            return RedirectToAction("GetAllCoupon");
+
+
+          
+            //if (_repos.RemoveItem(cus))
+            //var coup = _repos.GetAll().First(c => c.CouponID == id);
+            //if (_repos.RemoveItem(coup))
+            //{
+            //    return RedirectToAction("GetAllCoupon");
+            //}
+            //else return Content("Error");
         }
     }
 }
