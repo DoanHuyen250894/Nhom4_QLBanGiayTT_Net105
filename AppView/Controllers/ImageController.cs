@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace AppView.Controllers
-{
+{ 
     public class ImageController : Controller
     {
         private readonly IAllRepositories<Image> _repos;
@@ -88,18 +88,18 @@ namespace AppView.Controllers
                 image.Image4 = imageFile4.FileName;
             }
 
-          /*  if (_repos.AddItem(image))
+            if (_repos.AddItem(image))
             {
                 return RedirectToAction("GetAllImge");
             }
             else
             {
                 return BadRequest();
-            }*////
-            var httpClient = new HttpClient();
+            }///
+            /*var httpClient = new HttpClient();
             string apiUrl = $"https://localhost:7036/api/Image/Create-Image?Name={image.Name}&Image1={image.Image1}&Image2={image.Image2}&Image3={image.Image3}&Image4={image.Image4}&Status={image.Status}&ShoesDetailsID={image.ShoesDetailsID}";
             var response = await httpClient.PostAsync(apiUrl, null);
-            return RedirectToAction("GetAllImge");
+            return RedirectToAction("GetAllImge");*/
         }
 
         [HttpGet]
@@ -157,15 +157,15 @@ namespace AppView.Controllers
                 image.Image4 = imageFile4.FileName;
             }
 
-            /*   if (_repos.EditItem(image))
-               {
-                   return RedirectToAction("GetAllImge");
-               }
-               else return BadRequest();*/
-            var httpClient = new HttpClient();
-            string apiUrl = $"https://localhost:7036/api/Image/Update-Image?id={image.ImageID}&Name={image.Name}&Image1={image.Image1}&Image2={image.Image2}&Image3={image.Image3}&Image4={image.Image4}&Status={image.Status}&ShoesDetailsID={image.ShoesDetailsID}";
-            var response = await httpClient.PutAsync(apiUrl, null);
-            return RedirectToAction("GetAllImge");
+            if (_repos.EditItem(image))
+            {
+                return RedirectToAction("GetAllImge");
+            }
+            else return BadRequest();
+            /*  var httpClient = new HttpClient();
+              string apiUrl = $"https://localhost:7036/api/Image/Update-Image?id={image.ImageID}&Name={image.Name}&Image1={image.Image1}&Image2={image.Image2}&Image3={image.Image3}&Image4={image.Image4}&Status={image.Status}&ShoesDetailsID={image.ShoesDetailsID}";
+              var response = await httpClient.PutAsync(apiUrl, null);
+              return RedirectToAction("GetAllImge");*/
         }
 
         public async Task<IActionResult> Delete(Guid id)

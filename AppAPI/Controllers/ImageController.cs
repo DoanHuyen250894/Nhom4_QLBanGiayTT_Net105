@@ -10,7 +10,7 @@ namespace AppAPI.Controllers
 {
     [Route("api/[controller]")]//
     [ApiController]
-    public class ImageController : ControllerBase
+    public class ImageController : ControllerBase 
     {
         private readonly IAllRepositories<Image> repos;
         private readonly IAllRepositories<ShoesDetails> repos1;
