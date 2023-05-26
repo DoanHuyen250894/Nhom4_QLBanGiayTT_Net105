@@ -64,9 +64,10 @@
                {
                    <span>Ảnh lỗi rồi =)))</span>
                }
+                    
             </td>
             <td>
-                @{
+            @{
                     string b = System.IO.Path.GetExtension(item.Image2);
                 }
                 @if (@extensions.Contains(System.IO.Path.GetExtension(item.Image2).Trim()))
@@ -90,6 +91,7 @@
                 {
                     <span>Ảnh lỗi rồi =)))</span>
                 }
+                   
             </td>
             <td>
                 @{
@@ -103,6 +105,7 @@
                 {
                     <span>Ảnh lỗi rồi =)))</span>
                 }
+                   
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Status)

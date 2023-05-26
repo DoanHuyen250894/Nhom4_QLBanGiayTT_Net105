@@ -60,7 +60,7 @@ namespace AppAPI.Controllers
         }
 
         // PUT api/<ImageController>/5
-        [HttpPut("{id}")]
+        [HttpPut("Update-Image")]
         public bool Put(Guid id, string name, string ig1, string ig2, string ig3, string ig4, int status, Guid ShoesDetailsid)
         {
             var image = repos.GetAll().FirstOrDefault(c => c.ImageID == id);
@@ -77,7 +77,7 @@ namespace AppAPI.Controllers
 
 
         // DELETE api/<ImageController>/5
-        [HttpDelete("{id}")]
+        [HttpDelete("{Delete-Image}")]
         public bool Delete(Guid id)
         {
             var sp = repos.GetAll().FirstOrDefault(c => c.ImageID == id);

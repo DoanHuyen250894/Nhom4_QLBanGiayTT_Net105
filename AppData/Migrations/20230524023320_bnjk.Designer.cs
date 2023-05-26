@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AppData.Migrations
 {
     [DbContext(typeof(ShopDBContext))]
-    [Migration("20230521165353_BNML")]
-    partial class BNML
+    [Migration("20230524023320_bnjk")]
+    partial class bnjk
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,6 +23,37 @@ namespace AppData.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("AppData.Models.Address", b =>
+                {
+                    b.Property<Guid>("AddressID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Commune")
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<Guid>("CumstomerID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("District")
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Province")
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Street")
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("AddressID");
+
+                    b.HasIndex("CumstomerID");
+
+                    b.ToTable("Address", (string)null);
+                });
 
             modelBuilder.Entity("AppData.Models.Bill", b =>
                 {
@@ -203,9 +234,6 @@ namespace AppData.Migrations
                     b.Property<Guid>("CumstomerID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Address")
-                        .HasColumnType("nvarchar(400)");
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(300)");
@@ -501,6 +529,17 @@ namespace AppData.Migrations
                     b.ToTable("Voucher", (string)null);
                 });
 
+            modelBuilder.Entity("AppData.Models.Address", b =>
+                {
+                    b.HasOne("AppData.Models.Customer", "Customer")
+                        .WithMany("Addresses")
+                        .HasForeignKey("CumstomerID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+                });
+
             modelBuilder.Entity("AppData.Models.Bill", b =>
                 {
                     b.HasOne("AppData.Models.Coupon", "Coupon")
@@ -680,6 +719,8 @@ namespace AppData.Migrations
 
             modelBuilder.Entity("AppData.Models.Customer", b =>
                 {
+                    b.Navigation("Addresses");
+
                     b.Navigation("Bills");
 
                     b.Navigation("Cart")

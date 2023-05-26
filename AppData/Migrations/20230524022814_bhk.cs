@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace AppData.Migrations
 {
-    public partial class BNML : Migration
+    public partial class bhk : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -47,7 +47,6 @@ namespace AppData.Migrations
                     UserName = table.Column<string>(type: "nvarchar(100)", nullable: true),
                     Password = table.Column<string>(type: "nvarchar(100)", nullable: true),
                     Email = table.Column<string>(type: "nvarchar(300)", nullable: true),
-                    Address = table.Column<string>(type: "nvarchar(400)", nullable: true),
                     Sex = table.Column<int>(type: "int", nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(50)", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: false)
@@ -152,6 +151,29 @@ namespace AppData.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Voucher", x => x.VoucherID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Address",
+                columns: table => new
+                {
+                    AddressID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Street = table.Column<string>(type: "nvarchar(200)", nullable: true),
+                    Commune = table.Column<string>(type: "nvarchar(200)", nullable: true),
+                    District = table.Column<string>(type: "nvarchar(200)", nullable: true),
+                    Province = table.Column<string>(type: "nvarchar(200)", nullable: true),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    CumstomerID = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Address", x => x.AddressID);
+                    table.ForeignKey(
+                        name: "FK_Address_Customer_CumstomerID",
+                        column: x => x.CumstomerID,
+                        principalTable: "Customer",
+                        principalColumn: "CumstomerID",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -382,6 +404,11 @@ namespace AppData.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Address_CumstomerID",
+                table: "Address",
+                column: "CumstomerID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Bill_CouponID",
                 table: "Bill",
                 column: "CouponID");
@@ -464,6 +491,9 @@ namespace AppData.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Address");
+
             migrationBuilder.DropTable(
                 name: "BillDetails");
 

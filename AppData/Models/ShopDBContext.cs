@@ -39,7 +39,7 @@ namespace AppData.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Data Source=LAPTOP-46F72MJA\SQLEXPRESS;Initial Catalog=NET105_Nhom4_QLBanGiayTT;Integrated Security=True");
+            optionsBuilder.UseSqlServer(@"Data Source=DESKTOP-A9URI7S\SQLEXPRESS;Initial Catalog=ShoesNET105_DBFirst3;Persist Security Info=True; User ID =sa; Password =123456");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

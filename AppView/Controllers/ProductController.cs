@@ -37,7 +37,7 @@ namespace AppView.Controllers
             var images = JsonConvert.DeserializeObject<List<Product>>(apiData);
             return View(images);
         }
-       
+        [HttpGet]
         public async Task<IActionResult> Create()
         {
             return View();
@@ -46,38 +46,49 @@ namespace AppView.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Product product)
         {
-           /* string apiUrl = $"https://localhost:7036/api/Product/Create-Product??Name={product.Name}&Status={product.Status}";
+            /*  string apiUrl = $"https://localhost:7036/api/Product/Create-Product?Name={product.Name}&Status={product.Status}";
+              var httpClient = new HttpClient();
+              var response = await httpClient.GetAsync(apiUrl);
+              string apiData = await response.Content.ReadAsStringAsync();
+
+              var pro = JsonConvert.DeserializeObject<Product>(apiData);*/
+            /*  _repos.AddItem(product);
+              return RedirectToAction("GetAllProduct");*/
             var httpClient = new HttpClient();
-            var response = await httpClient.GetAsync(apiUrl);
-            string apiData = await response.Content.ReadAsStringAsync();
-            
-            var pro = JsonConvert.DeserializeObject<Product>(apiData);*/
-            _repos.AddItem(product);
+            string apiUrl = $"https://localhost:7036/api/Product/Create-Product?Name={product.Name}&Status={product.Status}";
+            var response = await httpClient.PostAsync(apiUrl, null);
             return RedirectToAction("GetAllProduct");
         }
         [HttpGet]
-        public IActionResult Edit(Guid id)
+        public async Task<IActionResult> Edit(Guid id)
         {
             Product product = _repos.GetAll().FirstOrDefault( c => c.ProductID == id);
             return View(product);
         }
-        public IActionResult Edit(Product product)
+        public async Task<IActionResult> Edit(Product product)
         {
-            if (_repos.EditItem(product))
-            {
-                return RedirectToAction("GetAllProduct");
-            }
-            else return BadRequest();
-           
+            /* if (_repos.EditItem(product))
+             {
+                 return RedirectToAction("GetAllProduct");
+             }
+             else return BadRequest();*/
+            var httpClient = new HttpClient();
+            string apiUrl = $"https://localhost:7036/api/Product/Update?id={product.ProductID}&Name={product.Name}&Status={product.Status}";
+            var response = await httpClient.PutAsync(apiUrl, null);
+            return RedirectToAction("GetAllProduct");
         }
-        public IActionResult Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             var pro = _repos.GetAll().FirstOrDefault( c => c.ProductID == id);
-            if (_repos.RemoveItem(pro))
-            {
-                return RedirectToAction("GetAllProduct");
-            }
-            else return BadRequest();
+            var httpClient = new HttpClient();
+            string apiUrl = $"https://localhost:7036/api/Product/delete?id={id}";
+            var response = await httpClient.DeleteAsync(apiUrl);
+            return RedirectToAction("GetAllProduct");
+            /*   if (_repos.RemoveItem(pro))
+               {
+                   return RedirectToAction("GetAllProduct");
+               }
+               else return BadRequest();*/
         }
 
         public IActionResult Details(Guid id)
