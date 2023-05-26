@@ -46,14 +46,13 @@ namespace AppView.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateEmployee(Employee employee)
         {
-            if (_repos.AddItem(employee))
-            {
-                return RedirectToAction("GetAllEmployee");
-            }
-            else return BadRequest();
+            var httpClient = new HttpClient();
+            string apiUrl = $"https://localhost:7036/api/Employee/create-employee?FullName={employee.FullName}&Password={employee.Password}&Email={employee.Email}&Sex={employee.Sex}&PhoneNumber={employee.PhoneNumber}&Status={employee.Status}&RoleID={employee.RoleID}";
+            var response = await httpClient.PostAsync(apiUrl, null);
+            return RedirectToAction("GetAllEmployee");
         }
         [HttpGet]
-        public IActionResult UpdateEmployee(Guid id)
+        public async Task<IActionResult> UpdateEmployee(Guid id)
         {
             Employee employee = _repos.GetAll().FirstOrDefault(c => c.EmployeeID == id);
             using (ShopDBContext shopDBContext = new ShopDBContext())
@@ -64,25 +63,32 @@ namespace AppView.Controllers
             }
             return View(employee);
         }
-        public IActionResult UpdateEmployee(Employee employee)
+        public async Task<IActionResult> UpdateEmployee(Employee employee)
         {
-            if (_repos.EditItem(employee))
-            {
-                return RedirectToAction("GetAllEmployee");
-            }
-            else return Content("Loi");
+            var httpClient = new HttpClient();
+            string apiUrl = $"https://localhost:7036/api/Employee/update-employee?id={employee.EmployeeID}&FullName={employee.FullName}&Password={employee.Password}&Email={employee.Email}&Sex={employee.Sex}&PhoneNumber={employee.PhoneNumber}&Status={employee.Status}&RoleID={employee.RoleID}";
+            var response = await httpClient.PutAsync(apiUrl, null);
+            return RedirectToAction("GetAllEmployee");
+            //if (_repos.EditItem(employee))
+            //{
+            //    return RedirectToAction("GetAllEmployee");
+            //}
+            //else return Content("Loi");
         }
         public async Task<IActionResult> DeleteEmployee(Guid id)
         {
             var employee = _repos.GetAll().First(c => c.EmployeeID == id);
-            if (_repos.RemoveItem(employee))
-            {
-                return RedirectToAction("GetAllEmployee");
-            }
-            else
-            {
-                return Content("Error");
-            }
+            var httpClient = new HttpClient();
+            string apiUrl = $"https://localhost:7036/api/Employee/delete-employee?id={id}";
+            var response = await httpClient.DeleteAsync(apiUrl);
+            return RedirectToAction("GetAllEmployee");
+            //if (_repos.RemoveItem(employee))
+            //{
+            //    return RedirectToAction("GetAllEmployee");
+            //}
+            //else
+            //{
+            //    return Content("Error");
         }
     }
 }
