@@ -31,45 +31,33 @@ namespace AppAPI.Controllers
         }
 
         // GET api/<ColorController1>/5
-        //[HttpGet("find-color")]
-        //public IEnumerable<Color> GetAll(string name)
-        //{
-        //    return _repos.GetAll().Where(c => c.Name.ToLower().Contains(name.ToLower())).ToList();
-        //}
+        [HttpGet("find-color")]
+        public IEnumerable<Color> GetAll(string name)
+        {
+            return _repos.GetAll().Where(c => c.Name.ToLower().Contains(name.ToLower())).ToList();
+        }
 
         // POST api/<ColorController1>
         [HttpPost("create-color")]
-        public string CreateColor(string Name, int Status)
+        public bool CreateColor(string Name, int Status)
         {
             Color color = new Color();
             color.Name = Name;
             color.Status = Status;
             color.ColorID = Guid.NewGuid();
 
-            if (_repos.AddItem(color))
-            {
-                return "Thêm thành công";
-            }
-            else
-            {
-                return "Error";
-            }
+           return _repos.AddItem(color);
         }
 
         // PUT api/<ColorController1>/5
         [HttpPut("update-color")]
-        public string UpdateColor(string Name, int Status, Guid ColorID)
+        public bool Put(string Name, int Status, Guid ColorID)
         {
             var colo = _repos.GetAll().FirstOrDefault(c => c.ColorID == ColorID);
-
-            if (_repos.EditItem(colo))
-            {
-                return "Sửa thành công";
-            }
-            else
-            {
-                return "Sửa thất bại";
-            }
+            colo.Name = Name;
+            colo.Status = Status;
+            return _repos.EditItem(colo);
+          
         }
 
 

@@ -40,50 +40,45 @@ namespace AppAPI.Controllers
 
         // POST api/<CouponController1>
         [HttpPost("create-coupon")]
-        public string CreateCoupon(string CouponCode, decimal CouponValue, int MaxUsage, int RemainingUsage, DateTime ExpirationDate, int Status)
+        public bool CreateCoupon(string CouponCode, decimal CouponValue, int MaxUsage, int RemainingUsage, DateTime ExpirationDate, int Status)
         {
             Coupon coupon = new Coupon();
             coupon.CouponCode = CouponCode;
             coupon.CouponValue = CouponValue;
             coupon.MaxUsage = MaxUsage;
             coupon.RemainingUsage = RemainingUsage;
+            //coupon.ExpirationDate = Convert.ToDateTime(ExpirationDate);
             coupon.ExpirationDate = ExpirationDate;
-            coupon.Status = Status;
             coupon.CouponID = Guid.NewGuid();
-
-            if (_repos.AddItem(coupon))
-            {
-                return "Thêm thành công";
-            }
-            else
-            {
-                return "Error";
-            }
+            return _repos.AddItem(coupon);
+           
         }
 
 
         // PUT api/<CouponController1>/5
         [HttpPut("update-coupon")]
-        public string UpdateCoupon( Guid CouponID,string CouponCode, decimal CouponValue, int MaxUsage, int RemainingUsage, DateTime ExpirationDate, int Status)
+        public bool Put( Guid CouponID,string CouponCode, decimal CouponValue, int MaxUsage, int RemainingUsage, DateTime ExpirationDate, int status)
         {
-            var colo = _repos.GetAll().FirstOrDefault(c => c.CouponID == CouponID);
+            var coupon = _repos.GetAll().First(c => c.CouponID == CouponID);
+            coupon.CouponCode = CouponCode;
+            coupon.CouponValue = CouponValue;
+            coupon.MaxUsage = MaxUsage;
+            coupon.RemainingUsage= RemainingUsage;
+            //coupon.ExpirationDate = Convert.ToDateTime(ExpirationDate);
+            coupon.ExpirationDate = ExpirationDate;
+            coupon.Status= status;
+           
+            return _repos.EditItem(coupon);
 
-            if (_repos.EditItem(colo))
-            {
-                return "Sửa thành công";
-            }
-            else
-            {
-                return "Sửa thất bại";
-            }
+
         }
 
         // DELETE api/<CouponController1>/5
         [HttpDelete("delete-coupon")]
         public bool Delete(Guid id)
         {
-            var colo = _repos.GetAll().First(c => c.CouponID == id);
-            return _repos.RemoveItem(colo);
+            var coupon = _repos.GetAll().First(c => c.CouponID == id);
+            return _repos.RemoveItem(coupon);
         }
         //public IActionResult Index()
         //{
