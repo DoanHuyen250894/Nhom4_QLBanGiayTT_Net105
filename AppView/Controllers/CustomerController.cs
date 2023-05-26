@@ -38,38 +38,42 @@ namespace AppView.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCustomer(Customer customer)
         {
-            string apiUrl = $"https://localhost:7036/api/Customer/create-customer?UserName={customer.UserName}&Password={customer.Password}&Email={customer.Email}&Sex={customer.Sex}";
             var httpClient = new HttpClient();
-            var response = await httpClient.GetAsync(apiUrl);
-            string apiData = await response.Content.ReadAsStringAsync();
-            // Cập nhật thông tin từ apiData vào đối tượng customer
-            var newCustomer = JsonConvert.DeserializeObject<Customer>(apiData);
-            _repos.AddItem(customer);
+            string apiUrl = $"https://localhost:7036/api/Customer/create-customer?UserName={customer.UserName}&Password={customer.Password}&Email={customer.Email}&Sex={customer.Sex}&PhoneNumber={customer.PhoneNumber}&Status={customer.Status}";
+            var response = await httpClient.PostAsync(apiUrl, null);
             return RedirectToAction("GetAllCustomer");
         }
         [HttpGet]
-        public IActionResult EditCustomer(Guid id) // Khi ấn vào Create thì hiển thị View
+        public async Task<IActionResult> EditCustomer(Guid id) // Khi ấn vào Create thì hiển thị View
         {
             // Lấy Product từ database dựa theo id truyền vào từ route
             Customer customer = _repos.GetAll().FirstOrDefault(c => c.CumstomerID == id);
             return View(customer);
         }
-        public IActionResult EditCustomer(Customer customer) // Thực hiện việc Tạo mới
+        public async Task<IActionResult> EditCustomer(Customer customer) // Thực hiện việc Tạo mới
         {
-            if (_repos.EditItem(customer))
-            {
-                return RedirectToAction("GetAllCustomer");
-            }
-            else return BadRequest();
+            var httpClient = new HttpClient();
+            string apiUrl = $"https://localhost:7036/api/Customer/update-customer?id={customer.CumstomerID}&UserName={customer.UserName}&Password={customer.Password}&Email={customer.Email}&Sex={customer.Sex}&PhoneNumber={customer.PhoneNumber}&Status={customer.Status}";
+            var response = await httpClient.PutAsync(apiUrl, null);
+            return RedirectToAction("GetAllCustomer");
+            //if (_repos.EditItem(customer))
+            //{
+            //    return RedirectToAction("GetAllCustomer");
+            //}
+            //else return BadRequest();
         }
-        public IActionResult DeleteCustomer(Guid id)
+        public async Task<IActionResult> DeleteCustomer(Guid id)
         {
             var cus = _repos.GetAll().First(c => c.CumstomerID == id);
-            if (_repos.RemoveItem(cus))
-            {
-                return RedirectToAction("GetAllCustomer");
-            }
-            else return Content("Error");
+            var httpClient = new HttpClient();
+            string apiUrl = $"https://localhost:7036/api/Customer/delete-customer?id={id}";
+            var response = await httpClient.DeleteAsync(apiUrl);
+            return RedirectToAction("GetAllCustomer");
+            //if (_repos.RemoveItem(cus))
+            //{
+            //    return RedirectToAction("GetAllCustomer");
+            //}
+            //else return Content("Error");
         }
     }
 }
