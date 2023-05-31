@@ -38,38 +38,37 @@ namespace AppView.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateSole(Sole sole)
         {
-        //    string apiUrl = $"https://localhost:7036/api/Sole/Create-Sole? Name={sole.Name}&Fabric={sole.Fabric}&Status={sole.Status}&Height={sole.Height}";
-        //    var httpClient = new HttpClient();
-        //    var response = await httpClient.GetAsync(apiUrl);
-        //    string apiData = await response.Content.ReadAsStringAsync();
-        //    // Cập nhật thông tin từ apiData vào đối tượng customer
-        //    var newSole = JsonConvert.DeserializeObject<Sole>(apiData);
-            _repos.AddItem(sole);
+            string apiUrl = $"https://localhost:7036/api/Sole/Create-Sole?name={sole.Name}&fabric={sole.Fabric}&status={sole.Status}&height={sole.Height}";
+            var httpClient = new HttpClient();
+            var response = await httpClient.PostAsync(apiUrl,null);
+            string apiData = await response.Content.ReadAsStringAsync();
+            //// Cập nhật thông tin từ apiData vào đối tượng customer
+            //var newSole = JsonConvert.DeserializeObject<Sole>(apiData);
+            //_repos.AddItem(sole);
             return RedirectToAction("GetAllSole");
         }
         [HttpGet]
-        public IActionResult EditSole(Guid id) // Khi ấn vào Create thì hiển thị View
+        public async Task<IActionResult> EditSole(Guid id) // Khi ấn vào Create thì hiển thị View
         {
             // Lấy Product từ database dựa theo id truyền vào từ route
             Sole sole = _repos.GetAll().FirstOrDefault(c => c.SoleID == id);
             return View(sole);
         }
-        public IActionResult EditSole(Sole sole) // Thực hiện việc Tạo mới
+        public async Task<IActionResult> EditSole(Sole sole) // Thực hiện việc Tạo mới
         {
-            if (_repos.EditItem(sole))
-            {
-                return RedirectToAction("GetAllSole");
-            }
-            else return BadRequest();
+            var httpClient = new HttpClient();
+            string apiUrl = $"https://localhost:7036/api/Sole/Update-Sole?soleID={sole.SoleID}&name={sole.Name}&fabric={sole.Fabric}&height={sole.Height}&status={sole.Status}";
+            var response = await httpClient.PutAsync(apiUrl, null);
+            return RedirectToAction("GetAllSole");
         }
-        public IActionResult DeleteSole(Guid id)
+        public async Task<IActionResult> DeleteSole(Guid id)
         {
             var sl = _repos.GetAll().First(c => c.SoleID == id);
-            if (_repos.RemoveItem(sl))
-            {
-                return RedirectToAction("GetAllSole");
-            }
-            else return Content("Error");
+            
+            var httpClien = new HttpClient();
+            string apiUrl = $"https://localhost:7036/api/Sole/Delete-Sole?soleID={id}";
+            var response = await httpClien.DeleteAsync(apiUrl);
+            return RedirectToAction("GetAllSole");
         }
     }
 }

@@ -34,46 +34,41 @@ namespace AppView.Controllers
 
             return View(size);
         }
+        [HttpGet]
         public async Task<IActionResult> CreateSize()
         {
             return View();
         }
         [HttpPost]
         public async Task<IActionResult> CreateSize(Size size)
-        {
-            //string apiUrl = $"https://localhost:7036/api/Size/Create-size? Name={size.Name}&Status={size.Status}";
-            //var httpClient = new HttpClient();
-            //var response = await httpClient.GetAsync(apiUrl);
-            //string apiData = await response.Content.ReadAsStringAsync();
-            //var newSize = JsonConvert.DeserializeObject<Size>(apiData);
-            _repos.AddItem(size);
+        {   
+            var httpClient = new HttpClient();
+            string apiUrl = $"https://localhost:7036/api/Size/Create-size?name={size.Name}&status={size.Status}";
+            var response = await httpClient.PostAsync(apiUrl, null);
             return RedirectToAction("GetAllSize");
-
-
         }
         [HttpGet]
-        public IActionResult EditSize(Guid id) // Khi ấn vào Create thì hiển thị View
+        public async Task<IActionResult> EditSize(Guid id) // Khi ấn vào Create thì hiển thị View
         {
             // Lấy Product từ database dựa theo id truyền vào từ route
             Size size = _repos.GetAll().FirstOrDefault(c => c.SizeID == id);
             return View(size);
         }
-        public IActionResult EditSize(Size size) // Thực hiện việc Tạo mới
+        public async Task<IActionResult> EditSize(Size size) // Thực hiện việc Tạo mới
         {
-            if (_repos.EditItem(size))
-            {
-                return RedirectToAction("GetAllSize");
-            }
-            else return BadRequest();
+            var httpClient = new HttpClient();
+            string apiUrl = $"https://localhost:7036/api/Size/Update-Size?sizeID={size.SizeID}&name={size.Name}&status={size.Status}";
+            var response = await httpClient.PutAsync(apiUrl, null);
+            return RedirectToAction("GetAllSize");
         }
-        public IActionResult DeleteSize(Guid id)
+        public async Task<IActionResult> DeleteSize(Guid id)
         {
             var sz = _repos.GetAll().First(c => c.SizeID == id);
-            if (_repos.RemoveItem(sz))
-            {
-                return RedirectToAction("GetAllSize");
-            }
-            else return Content("Error");
+            var httpClient = new HttpClient();
+            string apiUrl = $"https://localhost:7036/api/Size/Delete-Size?sizeID={id}";
+            var response = await httpClient.DeleteAsync(apiUrl);
+            return RedirectToAction("GetAllSize");
+
         }
        
 

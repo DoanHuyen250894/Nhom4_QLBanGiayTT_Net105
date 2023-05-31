@@ -51,7 +51,7 @@ namespace AppView.Controllers
         }
 
         // PUT api/<SoleController>/5
-        [HttpPut("{soleID}")]
+        [HttpPut("Update-Sole")]
         public bool Put(Guid soleID, string name, string fabric, int height, int status)
         {
             var sl = repos.GetAll().First(p => p.SoleID == soleID);
@@ -63,7 +63,7 @@ namespace AppView.Controllers
         }
 
         // DELETE api/<SoleController>/5
-        [HttpDelete("{soleID}")]
+        [HttpDelete("Delete-Sole")]
         public bool Delete(Guid soleID)
         {
             var sl = repos.GetAll().First(p => p.SoleID == soleID);

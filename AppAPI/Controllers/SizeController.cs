@@ -47,7 +47,7 @@ namespace AppAPI.Controllers
         }
 
         // PUT api/<SizeController>/5
-        [HttpPut("{sizeID}")]
+        [HttpPut("Update-Size")]
         public bool Put(Guid sizeID, string name, int status)
         {
             var sz = repos.GetAll().First(p => p.SizeID == sizeID);
@@ -57,7 +57,7 @@ namespace AppAPI.Controllers
         }
 
         // DELETE api/<SizeController>/5
-        [HttpDelete("{sizeID}")]
+        [HttpDelete("Delete-Size")]
         public bool Delete(Guid sizeID)
         {
             var sz = repos.GetAll().First(p => p.SizeID == sizeID);
