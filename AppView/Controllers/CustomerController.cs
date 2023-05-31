@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace AppView.Controllers
-{
+{ 
     public class CustomerController : Controller
     {
         private readonly IAllRepositories<Customer> _repos;
