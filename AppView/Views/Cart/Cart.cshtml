@@ -1,0 +1,367 @@
+﻿@{
+    ViewData["Title"] = "Giỏ hàng";
+}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="~/css/giohang.css">
+<section class="h-100 gradient-custom">
+    <div class="container py-5">
+        <div class="row d-flex justify-content-center my-4">
+            <div class="col-md-8">
+                <div class="card mb-4" style="border: 1px solid white;">
+                    <div class="card-header py-3">
+                        <h5 class="mb-0">Bag</h5>
+                    </div>
+                    @if (!Model.CartItems.Any())
+                    {
+                        <h6 style="margin-top:10px; margin-left:15px;">There are no items in your bag.</h6>
+                    }
+                    else
+                    {
+                    <div class="card-body">
+                        <!-- Single item -->
+                        <div class="row">
+                            @foreach (var item in Model.CartItems)
+                            { 
+                                <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
+                                    <!-- Image -->
+                                    <div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
+                                        <img src="@item.ProductImage" class="w-100" alt="Blue Jeans Jacket"/>
+                                        <a href="#!">
+                                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.2)"></div>
+                                        </a>
+                                    </div>
+                                    <!-- Image -->
+                                </div>
+
+                                <div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
+                                    <!-- Data -->
+                                    <p><strong>@item.ProductName</strong></p>
+                                    <p>@item.Description</p>
+                                    <p>Size @item.Size</p>
+                                    <form id="removeCartItemForm_@item.ProductId" method="post" action="@Url.Action("RemoveCartItem", "CartDetail")">
+                                        <input type="hidden" name="id" value="@item.ProductId" />
+                                    </form>
+                                    <!-- Button to remove cart item -->
+                                    <button type="button" class="btn btn-primary btn-sm me-1 mb-2" data-mdb-toggle="tooltip"
+                                    title="Remove item"
+                                    onclick="document.getElementById('removeCartItemForm_@item.ProductId').submit();">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                                    <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                                        <!-- Quantity -->
+                                        <div class="d-flex mb-4" style="max-width: 300px">
+                                            <button style="height: 37px; border-radius: 4px;" class="btn btn-primary px-3 me-2" onclick="decrementQuantity(this)" data-id="@item.ProductId" data-price="@item.Price">
+                                                <i class="fas fa-minus"></i>
+                                            </button>
+                                            <div class="form-outline">
+                                                <input id="quantity" min="1" max="99" name="quantity" value="@item.Quantity" type="number" class="form-control quantity" data-price="@item.Price" data-id="@item.ProductId" onchange="calculateTotalPrice(@item.Quantity)" />
+                                            </div>
+                                            <button style="height: 37px; border-radius: 4px;" class="btn btn-primary px-3 ms-2" onclick="incrementQuantity(this)" data-id="@item.ProductId" data-price="@item.Price">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </div>
+                                        <!-- Total Price -->
+                                        <p class="text-start text-md-center">
+                                            <span class="total-price ms-auto">@item.Price.ToString("N0")</span>
+                                        </p>
+                                        <!-- Total Price -->
+                                    </div>
+                                    <script>
+                                        // Tìm các thẻ input số lượng và cập nhật lại giá tiền
+                                        function updateTotalPrice(input) {
+                                            var quantity = input.value;
+                                            var price = input.getAttribute("data-price");
+                                            var totalPrice = quantity * price;
+                                            var priceElement = input.closest('.col-lg-4').querySelector(".total-price");
+                                            priceElement.innerHTML = totalPrice.toLocaleString("vi-VN", { style: "currency", currency: "VND" });
+
+                                            // Lưu giá tiền vào sessionStorage
+                                            var id = input.getAttribute("data-id");
+                                            sessionStorage.setItem("price_" + id, totalPrice);
+
+                                            // Lưu số lượng vào sessionStorage
+                                            sessionStorage.setItem("quantity_" + id, quantity);
+                                            var totalPriceElement1 = document.querySelector(".cart-total-sub");
+                                            var totalPriceElement2 = document.querySelector(".cart-total-all");
+                                            var inputs = document.querySelectorAll('input[type="number"]');
+                                            var totalPrice = 0;
+                                            for (var i = 0; i < inputs.length; i++) {
+                                                var price = inputs[i].getAttribute("data-price");
+                                                var quantity = inputs[i].value;
+                                                var itemPrice = price * quantity;
+                                                totalPrice += itemPrice;
+                                            }
+                                            // Cập nhật giá trị của phần tử hiển thị tổng giá tiền
+                                            totalPriceElement1.innerHTML = totalPrice.toLocaleString("vi-VN", { style: "currency", currency: "VND" });
+                                            totalPriceElement2.innerHTML = totalPrice.toLocaleString("vi-VN", { style: "currency", currency: "VND" });
+                                        }
+                                        // Tăng giá trị số lượng và cập nhật giá tiền
+                                        function incrementQuantity(button) {
+                                            var input = button.parentNode.querySelector('input.quantity');
+                                            input.stepUp();
+                                            updateTotalPrice(input);
+
+                                        }
+
+                                        // Giảm giá trị số lượng và cập nhật giá tiền
+                                        function decrementQuantity(button) {
+                                            var input = button.parentNode.querySelector('input.quantity');
+                                            input.stepDown();
+                                            updateTotalPrice(input);
+                                        }
+                                    </script>
+                                <hr class="my-4" />
+                            }
+                        </div>
+                        <!-- Single item -->
+                   </div>
+                   }
+                </div>
+                <div class="card mb-4" style="border: 1px solid white;">
+                    <div class="card-body">
+                        <p><strong>Favourites</strong></p>
+                        <p class="mb-0">There are no items saved to your favourites.</p>
+                    </div>
+                </div>
+                <div class="card mb-4 mb-lg-0" style="border: 1px solid white;">
+                    <div class="card-body">
+                        <p><strong>We accept</strong></p>
+                        <img class="me-2" style="width: 45px;"
+                             src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/visa.svg"
+                             alt="Visa" />
+                        <img class="me-2" style="width: 45px;"
+                             src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/amex.svg"
+                             alt="American Express" />
+                        <img class="me-2" style="width: 45px;"
+                             src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/mastercard.svg"
+                             alt="Mastercard" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-4" style="border: 1px solid white;">
+                    <div class="card-header py-3">
+                        <h5 class="mb-0">Summary</h5>
+                    </div>
+                    <div class="card-body" style="border: 1px solid white;">
+                        <div id="total-price">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
+                                    Subtotal
+                                    <div id="cart-total-container">
+                                        <span class="cart-total-sub"></span>
+                                    </div>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                    Estimated Delivery & Handling
+                                    <span>Free</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
+                                    <div>
+                                        <strong>Total</strong>
+                                    </div>
+                                    <div id="cart-total-container">
+                                        <span name="TongTien" class="cart-total-all" style="font-weight:bold;"></span>
+                                    </div>
+                                </li>
+                            </ul>
+                            <hr />
+                            <form method="post" action="@Url.Action("CheckoutOk", "CartDetail")" id="checkout-form">
+                                <div class="form-group">
+                                    <input type="hidden" id="total-price" name="TongTien" value="">
+                                </div>
+                                <div class="form-group">
+                                    <label for="MaHD">Mã HD:</label>
+                                    <strong id="MaHD" name="MaHD">@Model.CartItems.FirstOrDefault()?.MaHD</strong>
+                                </div>
+                                <div class="form-group">
+                                    <label for="name">Name:</label>
+                                    <input type="text" class="form-control" id="name" name="HoTen" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="phone">Phone number:</label>
+                                    <input type="tel" class="form-control" id="phone" name="SoDienThoai" required>
+                                </div>
+                                <div class="form-group">
+@*                                    <label for="email">Email:</label>*@
+                                    <input style="display:none;" type="email" class="form-control" id="email" name="Email">
+                                </div>
+                                <div class="form-group">
+@*                                    <label for="Password" style="he">Password:</label>*@
+                                    <input style="display:none;" type="password" class="form-control" id="password" name="Password">
+                                </div>
+                                <div class="form-group">
+                                    <label for="address">Address:</label>
+                                    <input type="text" class="form-control" id="address" name="DiaChi" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="date">Date of purchase:</label>
+                                    <input type="date" class="form-control" id="date" name="date" required>
+                                </div>
+                                <div class="form-group">
+                                    <input type="radio" id="paid" name="TrangThaiThanhToan" value="1">
+                                    <label for="paid">Đã thanh toán</label>
+                                    <br />
+                                    <input type="radio" id="not-paid" name="TrangThaiThanhToan" value="0" checked>
+                                    <label for="not-paid">Chưa thanh toán</label>
+                                </div>
+                                <button class="btn1 btn-danger text mr-2 px-4" type="submit"
+                                        style="width: 355px; height: 45px; border-radius: 25px; color: white; background-color: black; margin-top:15px;">
+                                    Member Checkout
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script>
+                var totalPriceSpan = document.querySelector('.cart-total-all');
+                var totalPriceInput = document.querySelector('#total-price');
+                totalPriceInput.value = totalPriceSpan.innerText.trim();
+            </script>
+            <script>
+                $("#btn1").click(function () {
+                    var maHD = $("#MaHD").html(); // lấy giá trị của thẻ strong có id là MaHD
+                    $('input[name="MaHD"]').val(maHD); // gán giá trị của MaHD cho phần tử đầu vào có name là MaHD
+                });
+
+            </script>
+            <script>
+                $(document).ready(function () {
+                    // Lấy ngày hiện tại
+                    const today = new Date().toISOString().substr(0, 10);
+
+                    // Gán ngày hiện tại vào trường Ngày tạo và disable trường
+                    $("#date").val(today).prop('disabled', true);
+                });
+            </script>
+@*            <script>
+                let totalPrice = 0; // khởi tạo biến tổng giá tiền của các sản phẩm trong giỏ hàng
+                const cartItems = document.querySelectorAll('.col-lg-4'); // lấy tất cả các sản phẩm trong giỏ hàng
+                cartItems.forEach(function (item) {
+                    const priceElement = item.querySelector('.total-price'); // lấy giá tiền của sản phẩm
+                    const priceText = priceElement.innerText;
+                    const regex = /[\D]+/g; // sử dụng biểu thức chính quy để lấy ra các ký tự không phải số từ chuỗi
+                    const price = parseFloat(priceText.replace(regex, '')); // xóa các ký tự không phải số và chuyển đổi thành một số
+                    // chuyển đổi giá tiền sang kiểu số và bỏ đi ký hiệu $
+                    totalPrice += price; // cộng thêm giá tiền của sản phẩm vào biến tổng
+                });
+                // Điền tổng giá tiền vào các phần tử tương ứng trên trang web
+                const cartTotalSub = document.querySelector('.cart-total-sub');
+                const cartTotalAll = document.querySelector('.cart-total-all');
+                cartTotalSub.innerText = totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }); // hiển thị tổng giá tiền vào phần subtotal
+                cartTotalAll.innerText = totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }); // hiển thị tổng giá tiền vào phần total
+            </script>*@
+        </div>
+    </div>
+</section>
+<div class="shell">
+    <div class="container">
+        <div class="tieude1" style="padding-bottom: 8px;">
+            <h3>Có thể bạn quan tâm</h3>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="wsk-cp-product">
+                    <div class="wsk-cp-img">
+                        <img src="/image/anh26.png" alt="Product" class="img-responsive" />
+                    </div>
+                    <div class="wsk-cp-text">
+                        <div class="category">
+                            <span>View</span>
+                        </div>
+                        <div class="title-product">
+                            <h3>Nike ZoomX Vaporfly</h3>
+                        </div>
+                        <div class="description-prod">
+                            <p>Men's Road Racing Shoesk NEXT% 2</p>
+                        </div>
+                        <div class="card-footer" style="padding-left: 38px;">
+                            <div class="wcf-left">
+                                <span class="price" style="color: red; font-size: 16px;">
+                                    5,617,649đ <del style="color: black; font-size: 16px;"> 6.408.000đ</del>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="wsk-cp-product">
+                    <div class="wsk-cp-img">
+                        <img src="/image/anh27.png" alt="Product" class="img-responsive" />
+                    </div>
+                    <div class="wsk-cp-text">
+                        <div class="category">
+                            <span>View</span>
+                        </div>
+                        <div class="title-product">
+                            <h3>Nike Pegasus Trail 3</h3>
+                        </div>
+                        <div class="description-prod">
+                            <p>Men's Trail-Running Shoes</p>
+                        </div>
+                        <div class="card-footer" style="padding-left: 38px;">
+                            <div class="wcf-left">
+                                <span class="price" style="color: red; font-size: 16px;">
+                                    3,829,000đ <del style="color: black; font-size: 16px;"> 4.205.000đ</del>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="wsk-cp-product">
+                    <div class="wsk-cp-img">
+                        <img src="/image/anh28.png" alt="Product" class="img-responsive" />
+                    </div>
+                    <div class="wsk-cp-text">
+                        <div class="category">
+                            <span>View</span>
+                        </div>
+                        <div class="title-product">
+                            <h3>Nike Heritage</h3>
+                        </div>
+                        <div class="description-prod">
+                            <p>Drawstring Bag (13L)</p>
+                        </div>
+                        <div class="card-footer" style="padding-left: 50px;">
+                            <div class="wcf-left">
+                                <span class="price" style="color: red; font-size: 16px;">
+                                    509,000đ <del style="color: black; font-size: 16px;"> 699.000đ</del>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="wsk-cp-product">
+                    <div class="wsk-cp-img">
+                        <img src="/image/anh29.png" alt="Product" class="img-responsive" />
+                    </div>
+                    <div class="wsk-cp-text">
+                        <div class="category">
+                            <span>View</span>
+                        </div>
+                        <div class="title-product">
+                            <h3>Nike React Infinity Run</h3>
+                        </div>
+                        <div class="description-prod">
+                            <p>Men's Road Running Shoes</p>
+                        </div>
+                        <div class="card-footer" style="padding-left: 38px;">
+                            <div class="wcf-left">
+                                <span class="price" style="color: red; font-size: 16px;">
+                                    3,747,649đ <del style="color: black; font-size: 16px;"> 4.409.000đ</del>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
