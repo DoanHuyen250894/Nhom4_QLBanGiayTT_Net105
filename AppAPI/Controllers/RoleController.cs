@@ -49,7 +49,7 @@ namespace AppAPI.Controllers
         }
 
         // PUT api/<RoleController>/5
-        [HttpPut("{id}")]
+        [HttpPut("update-role")]
         public bool Put(Guid id, string name, int status)
         {
             var r = repos.GetAll().First(p => p.RoleID == id);
@@ -58,11 +58,18 @@ namespace AppAPI.Controllers
         }
 
         // DELETE api/<RoleController>/5
-        [HttpDelete("{id}")]
-        public bool Delete(Guid id)
+        [HttpDelete("delete-role")]
+        public string Deletes(Guid id)
         {
             var r = repos.GetAll().First(p => p.RoleID == id);
-            return repos.RemoveItem(r);     
+            if (repos.RemoveItem(r))
+            {
+                return "Thêm thành công";
+            }
+            else
+            {
+                return "Thêm thất bại";
+            }
         }
     }
 }
