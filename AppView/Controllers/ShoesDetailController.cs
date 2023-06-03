@@ -2,6 +2,7 @@
 using AppData.Models;
 using AppData.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
@@ -33,45 +34,97 @@ namespace AppView.Controllers
             return View(shoesdt);
         }
         [HttpGet]
-        public async Task<IActionResult> CreateShoesDetail()
+        public async Task<IActionResult> CreateShoesDetails()
         {
+            using(ShopDBContext shopDBContext = new ShopDBContext())
+            {
+                var color = shopDBContext.Colors.ToList();
+                SelectList selectListColor = new SelectList(color, "ColorID", "Name");
+                ViewBag.ColorList = selectListColor;
+
+                var product = shopDBContext.Products.ToList();
+                SelectList selectListProduct = new SelectList(product, "ProductID", "Name");
+                ViewBag.ProductList = selectListProduct;
+
+                var size = shopDBContext.Sizes.ToList();
+                SelectList selectListSize = new SelectList(size, "SizeID", "Name");
+                ViewBag.SizeList = selectListSize;
+
+                var sole = shopDBContext.Soles.ToList();
+                SelectList selectListSole = new SelectList(sole, "SoleID", "Name");
+                ViewBag.SoleList = selectListSole;
+
+                var style = shopDBContext.Styles.ToList();
+                SelectList selectListStyle = new SelectList(style, "StyleID", "Name");
+                ViewBag.StyleList = selectListStyle;
+
+                var supplier = shopDBContext.Suppliers.ToList();
+                SelectList selectListSupplier = new SelectList(supplier, "SupplierID", "Name");
+                ViewBag.SupplierList = selectListSupplier;
+            }
+           
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> CreateShoesDetail(ShoesDetails shoesdt)
+        public async Task<IActionResult> CreateShoesDetails(ShoesDetails shoesdt)
         {
-            /*string apiUrl = $"https://localhost:7036/api/Role/create-role?UserName={role.RoleName}&Status={role.Status}";
-            var httpClient = new HttpClient();
-            var response = await httpClient.GetAsync(apiUrl);
-            string apiData = await response.Content.ReadAsStringAsync();
-            // Cập nhật thông tin từ apiData vào đối tượng customer
-            var newRole = JsonConvert.DeserializeObject<Role>(apiData);*/
-            repos.AddItem(shoesdt);
-            return RedirectToAction("GetAllShoesDetail");
+            HttpClient httpClient = new HttpClient();
+            string apiUrl = $"https://localhost:7036/api/ShoesDetails/create-shoesdetail?createdate={shoesdt.CreateDate}&price={shoesdt.Price}&importprice={shoesdt.ImportPrice}&availablequantity={shoesdt.AvailableQuantity}&description={shoesdt.Description}&status={shoesdt.Status}&colorid={shoesdt.ColorID}&productid={shoesdt.ProductID}&sizeid={shoesdt.SizeID}&soleid={shoesdt.SoleID}&styleid={shoesdt.StyleID}&supplierid={shoesdt.SupplierID}";
+           
+            var response = await httpClient.PostAsync(apiUrl, null);
+            
+            return RedirectToAction("GetAllShoesDetails");
         }
         [HttpGet]
-        public IActionResult EditShoesDetail(Guid id) // Khi ấn vào Create thì hiển thị View
+        public IActionResult UpdateShoesDetails(Guid id) // Khi ấn vào Create thì hiển thị View
         {
             // Lấy Product từ database dựa theo id truyền vào từ route
             ShoesDetails shoesdt = repos.GetAll().FirstOrDefault(c => c.ShoesDetailsId == id);
+
+            using (ShopDBContext shopDBContext = new ShopDBContext())
+            {
+                var color = shopDBContext.Colors.ToList();
+                SelectList selectListColor = new SelectList(color, "ColorID", "Name");
+                ViewBag.ColorList = selectListColor;
+
+                var product = shopDBContext.Products.ToList();
+                SelectList selectListProduct = new SelectList(product, "ProductID", "Name");
+                ViewBag.ProductList = selectListProduct;
+
+                var size = shopDBContext.Sizes.ToList();
+                SelectList selectListSize = new SelectList(size, "SizeID", "Name");
+                ViewBag.SizeList = selectListSize;
+
+                var sole = shopDBContext.Soles.ToList();
+                SelectList selectListSole = new SelectList(sole, "SoleID", "Name");
+                ViewBag.SoleList = selectListSole;
+
+                var style = shopDBContext.Styles.ToList();
+                SelectList selectListStyle = new SelectList(style, "StyleID", "Name");
+                ViewBag.StyleList = selectListStyle;
+
+                var supplier = shopDBContext.Suppliers.ToList();
+                SelectList selectListSupplier = new SelectList(supplier, "SupplierID", "Name");
+                ViewBag.SupplierList = selectListSupplier;
+            }
             return View(shoesdt);
         }
-        public IActionResult EditShoesDetail(ShoesDetails shoesdt) // Thực hiện việc Tạo mới
+        public async Task<IActionResult> UpdateShoesDetails(ShoesDetails shoesdt) // Thực hiện việc Tạo mới
         {
-            if (repos.EditItem(shoesdt))
-            {
-                return RedirectToAction("GetAllShoesDetail");
-            }
-            else return BadRequest();
+            HttpClient httpClient = new HttpClient();
+            string apiUrl = $"https://localhost:7036/api/ShoesDetails/edit-shoesdetail?id={shoesdt.ShoesDetailsId}&createdate={shoesdt.CreateDate}&price={shoesdt.Price}&importprice={shoesdt.ImportPrice}&availablequantity={shoesdt.AvailableQuantity}&description={shoesdt.Description}&status={shoesdt.Status}&colorid={shoesdt.ColorID}&productid={shoesdt.ProductID}&sizeid={shoesdt.SizeID}&soleid={shoesdt.SoleID}&styleid={shoesdt.StyleID}&supplierid={shoesdt.SupplierID}";
+
+           var response = await httpClient.PutAsync(apiUrl, null);
+
+            return RedirectToAction("GetAllShoesDetails");
         }
-        public IActionResult DeleteShoesDetail(Guid id)
+        public async Task<IActionResult> DeleteShoesDetails(Guid id)
         {
             var shoesdt = repos.GetAll().First(c => c.ShoesDetailsId == id);
-            if (repos.RemoveItem(shoesdt))
-            {
-                return RedirectToAction("GetAllShoesDetail");
-            }
-            else return BadRequest();
+            HttpClient httpClient = new HttpClient();
+            string apiUrl = $"https://localhost:7036/api/ShoesDetails/delete-shoesdetail?id={id}";
+            var response = await httpClient.DeleteAsync(apiUrl);
+            return RedirectToAction("GetAllShoesDetails");
         }
         public IActionResult Details(Guid id)
         {
