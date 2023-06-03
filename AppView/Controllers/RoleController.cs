@@ -2,6 +2,7 @@
 using AppData.Models;
 using AppData.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
@@ -34,45 +35,50 @@ namespace AppView.Controllers
             return View(role);
         }
         [HttpGet]
-        public async Task<IActionResult> CreateRole()
+        public async Task<IActionResult> Create()
         {
+            
             return View();
-        }
+        }     
         [HttpPost]
-        public async Task<IActionResult> CreateRole(Role role)
+        public async Task<IActionResult> Create(Role role)     
         {
-           string apiUrl = $"https://localhost:7036/api/Role/create-role?UserName={role.RoleName}&Status={role.Status}";
-            var httpClient = new HttpClient();
-            var response = await httpClient.GetAsync(apiUrl);
-            string apiData = await response.Content.ReadAsStringAsync();
+            HttpClient httpClient = new HttpClient();
+            string apiUrl = $"https://localhost:7036/api/Role/create-role?name={role.RoleName}&status={role.Status}";
+            
+            var response = await httpClient.PostAsync(apiUrl, null);
+            //string apiData = await response.Content.ReadAsStringAsync();
             // Cập nhật thông tin từ apiData vào đối tượng customer
-            var newRole = JsonConvert.DeserializeObject<Role>(apiData);
-            repos.AddItem(role);
+            //var role = JsonConvert.DeserializeObject<Role>(apiData);
+           // repos.AddItem(role);
             return RedirectToAction("GetAllRole");
         }
         [HttpGet]
-        public IActionResult EditRole(Guid id) // Khi ấn vào Create thì hiển thị View
+        public IActionResult Edit(Guid id) // Khi ấn vào Create thì hiển thị View
         {
             // Lấy Product từ database dựa theo id truyền vào từ route
             Role role = repos.GetAll().FirstOrDefault(c => c.RoleID == id);
+           
             return View(role);
         }
-        public IActionResult EditRole(Role role) // Thực hiện việc Tạo mới
+        public async Task<IActionResult> Edit(Role role) // Thực hiện việc Tạo mới
         {
-            if (repos.EditItem(role))
-            {
+            //Role role = repos.GetAll().FirstOrDefault(c => c.RoleID == id);
+            HttpClient httpClient = new HttpClient();
+            string apiUrl = $"https://localhost:7036/api/Role/update-role?id={role.RoleID}&name={role.RoleName}&status={role.Status}";
+            var response = await httpClient.PutAsync(apiUrl, null);
+            
                 return RedirectToAction("GetAllRole");
-            }
-            else return BadRequest();
+            
         }
-        public IActionResult DeleteRole(Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
-            var rol = repos.GetAll().First(c => c.RoleID == id);
-            if (repos.RemoveItem(rol))
-            {
+            var role = repos.GetAll().First(c => c.RoleID == id);
+            HttpClient httpClient = new HttpClient();
+            string apiUrl = $"https://localhost:7036/api/Role/delete-role?id={id}";    
+            var response = await httpClient.DeleteAsync(apiUrl);
                 return RedirectToAction("GetAllRole");
-            }
-            else return BadRequest(); 
+            
         }
         public IActionResult Details(Guid id)
         {
