@@ -7,7 +7,7 @@
 <h1>GetAllShoesDetails</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="CreateShoesDetails">Create New</a>
 </p>
 <table class="table">
     <thead>
@@ -107,9 +107,9 @@
             
             <td>
                 
-                @Html.ActionLink("EditShoesDetail", "EditShoesDetail", new {  id=item.ShoesDetailsId  }) |
+                @Html.ActionLink("UpdateShoesDetails", "UpdateShoesDetails", new {  id=item.ShoesDetailsId  }) |
                 @Html.ActionLink("Details", "Details", new {  id=item.ShoesDetailsId  }) | 
-                @Html.ActionLink("DeleteShoesDetail", "DeleteShoesDetail", new {  id=item.ShoesDetailsId  })
+                @Html.ActionLink("DeleteShoesDetails", "DeleteShoesDetails", new {  id=item.ShoesDetailsId  })
             </td>
         </tr>
 }
