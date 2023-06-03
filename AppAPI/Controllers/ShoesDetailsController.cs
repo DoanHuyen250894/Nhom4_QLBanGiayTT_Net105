@@ -62,7 +62,7 @@ namespace AppAPI.Controllers
             shoesdt.StyleID = styleid;
            shoesdt.SupplierID = supplierid;
             //shoesdt.Color.Name = namecolor;
-            //shoesdt.ColorID = colorrp.GetAll().Where(p => p.Name == namecolor).Select(p => p.ColorID).FirstOrDefault();
+           // shoesdt.ColorID = colorrp.GetAll().Where(p => p.Name == colorid).Select(p => p.ColorID).FirstOrDefault();
             //shoesdt.ProductID = productrp.GetAll().Where(p => p.Name == nameproduct).Select(p => p.ProductID).FirstOrDefault();
             //shoesdt.SizeID = sizerp.GetAll().Where(p => p.Name == namesize).Select(p => p.SizeID).FirstOrDefault();
             //shoesdt.SoleID = solerp.GetAll().Where(p => p.Name == namesole).Select(p => p.SoleID).FirstOrDefault();
@@ -72,7 +72,7 @@ namespace AppAPI.Controllers
         }
 
         // PUT api/<ShoesDetailsController>/5
-        [HttpPut("{id}")]
+        [HttpPut("edit-shoesdetail")]
         public bool Put(Guid id, string createdate, decimal price, decimal importprice, int availablequantity, string description, int status, Guid colorid, Guid productid, Guid sizeid, Guid soleid, Guid styleid, Guid supplierid) 
         {
             var shoesdt = repos.GetAll().First(p => p.ShoesDetailsId == id);
@@ -99,7 +99,7 @@ namespace AppAPI.Controllers
         }
 
         // DELETE api/<ShoesDetailsController>/5
-        [HttpDelete("{id}")]
+        [HttpDelete("delete-shoesdetail")]
         public bool Delete(Guid id)
         {
             var shoesdt = repos.GetAll().First(p => p.ShoesDetailsId == id);
