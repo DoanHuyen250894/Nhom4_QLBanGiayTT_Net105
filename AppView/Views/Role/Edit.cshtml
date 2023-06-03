@@ -1,7 +1,7 @@
 ﻿@model AppData.Models.Role
 
 @{
-    ViewData["Title"] = "EditRole";
+    ViewData["Title"] = "Edit";
 }
 <link rel="stylesheet" href="~/css/FormInput.css">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -23,7 +23,7 @@
                                     get first <br> access to the very best of Nike products, inspiration <br> and
                                     community.
                                 </p>
-                                <form asp-action="EditCustomer" style="margin-top:10px;" id="register-form">
+                                <form asp-action="Edit" style="margin-top:10px;" id="register-form">
                                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                     <div class="form-floating mb-3" style="display:none;">
                                         <input asp-for="RoleID" type="text" class="form-control" placeholder="RoleID" required>
