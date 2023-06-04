@@ -21,6 +21,7 @@ namespace AppData.Models
         public Guid? SoleID { get; set; }
         public Guid? StyleID { get; set; }
         public Guid? SupplierID { get; set; }
+        public string? ImageUrl { get; set; }
         public virtual Color Color { get; set; }
         public virtual Size Size { get; set; }
         public virtual Sole Sole { get; set; }
