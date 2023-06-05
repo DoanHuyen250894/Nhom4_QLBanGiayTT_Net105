@@ -53,6 +53,7 @@ namespace AppAPI.Controllers
             image.Image3 = ig3;
             image.Image4 = ig4;
             image.Status = status;
+           
             image.ImageID = Guid.NewGuid();
             image.ShoesDetailsID = shoes.ShoesDetailsId;
             return repos.AddItem(image);

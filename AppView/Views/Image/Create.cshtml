@@ -4,7 +4,6 @@
     ViewData["Title"] = "Create";
 }
 
-
 <link rel="stylesheet" href="~/css/FormInput.css">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <div class="container">
@@ -26,56 +25,52 @@
                                     community.
                                 </p>
                                 <form asp-action="Create" enctype="multipart/form-data" style="margin-top:10px;" id="register-form">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group" style="display: none">
-                <label asp-for="ImageID" class="control-label"></label>
-                <input asp-for="ImageID" class="form-control" />
-                <span asp-validation-for="ImageID" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <br />
-            <div class="form-group">
-               <input type="file" name="imageFile1" class="form-control" accept="image/*" />
-              
-            </div>
-            <br />
-                                    <br />
-            <div class="form-group">
-                <input type="file" name="imageFile2" class="form-control" />
-             
-            </div>
-            <br />
-                                    <br />
-            <div class="form-group">
-               <input type="file" name="imageFile3" class="form-control" />
-            
-            </div>
-            <br />
-                                    <br />
-            <div class="form-group">
-                <input type="file" name="imageFile4" class="form-control" />
-               
-            </div>
-            <br />
-            <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <input asp-for="Status" class="form-control" />
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-               @* <label asp-for="ShoesDetailsID" class="control-label"></label>
-                <input asp-for="ShoesDetailsID" class="form-control" />
-                <span asp-validation-for="ShoesDetailsID" class="text-danger"></span>*@
-               <label asp-for="ShoesDetails" class="control-label"></label>
-                <select asp-for="ShoesDetailsID" class="form-control" asp-items="@ViewBag.ShoesDTList"></select>
-                <span asp-validation-for="ShoesDetails" class="text-danger"></span>
-            </div>
-                                    <br />
 
+                                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                    @*   <div class="form-group">
+                                    <label asp-for="ImageID" class="control-label"></label>
+                                    <input asp-for="ImageID" class="form-control" />
+                                    <span asp-validation-for="ImageID" class="text-danger"></span>
+                                    </div>*@
+                                    <div class="form-group">
+                                        <label asp-for="Name" class="control-label"></label>
+                                        <input asp-for="Name" class="form-control" />
+                                        <span asp-validation-for="Name" class="text-danger"></span>
+                                    </div>
+                                    <br />
+                                    <div class="form-group">
+                                        <input type="file" name="imageFile1" class="form-control" accept="image/*" />
+
+                                    </div>
+                                    <br />
+                                    <div class="form-group">
+                                        <input type="file" name="imageFile2" class="form-control" />
+
+                                    </div>
+                                    <br />
+                                    <div class="form-group">
+                                        <input type="file" name="imageFile3" class="form-control" />
+
+                                    </div>
+
+                                    <br />
+                                    <div class="form-group">
+                                        <input type="file" name="imageFile4" class="form-control" />
+
+                                    </div>
+                                    <br />
+                                    <div class="form-group">
+                                        <label asp-for="Status" class="control-label"></label>
+                                        <input asp-for="Status" class="form-control" />
+                                        <span asp-validation-for="Status" class="text-danger"></span>
+                                    </div>
+                                    <br />
+                                    <div class="form-group">
+                                        <label asp-for="ShoesDetails" class="control-label"></label>
+                                        <select asp-for="ShoesDetailsID" class="form-control" asp-items="@ViewBag.ShoesDTList"></select>
+                                        <span asp-validation-for="ShoesDetails" class="text-danger"></span>
+                                    </div>
+                                    <br />
                                     <div class="d-flex justify-content-center">
                                         <button type="submit" value="Create"
                                                 style="color: white; background-color: rgb(3, 3, 3); width: 520px; height: 40px;"
@@ -92,3 +87,7 @@
         </div>
     </section>
 </div>
+
+
+
+
