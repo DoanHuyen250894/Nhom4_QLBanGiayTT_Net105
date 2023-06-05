@@ -1,0 +1,232 @@
+﻿@model IEnumerable<AppData.Models.ShoesDetails>
+@{
+	ViewData["Title"] = "Sản phẩm";
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<link rel="stylesheet" href="~/css/sanpham.css">
+	<link href="https://unpkg.com/tailwindcss@0.3.0/dist/tailwind.min.css" rel="stylesheet">
+	<link rel="stylesheet" href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css'>
+	<link rel="icon" href="img/mdb-favicon.ico" type="image/x-icon" />
+	<!-- Font Awesome -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+	<!-- Google Fonts Roboto -->
+	<link rel="stylesheet"
+		  href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" />
+	<title>Product</title>
+</head>
+
+<body>
+	<section id="sidebar" style="float: left" ;>
+		<div class="border-bottom pb-2 ml-2">
+			<h4 id="burgundy">Bộ lọc</h4>
+		</div>
+		<div class="py-2 border-bottom ml-3" style="margin-top: 25px;">
+			<h6 class="font-weight-bold">Giới tính</h6>
+			<div id="orange"><span class="fa fa-minus"></span></div>
+			<form style="padding-top: 10px;">
+				<div class="form-group">
+					<input type="checkbox" id="artisan">
+					<label for="artisan">Nam</label>
+				</div>
+				<div class="form-group">
+					<input type="checkbox" id="breakfast">
+					<label for="breakfast">Nữ</label>
+				</div>
+				<div class="form-group">
+					<input type="checkbox" id="healthy">
+					<label for="healthy">Unisex</label>
+				</div>
+			</form>
+		</div>
+		<div class="py-2 border-bottom ml-3" style="margin-top: 25px;">
+			<h6 class="font-weight-bold">Kids</h6>
+			<div id="orange"><span class="fa fa-minus"></span></div>
+			<form style="padding-top: 10px;">
+				<div class="form-group">
+					<input type="checkbox" id="tea">
+					<label for="tea">Boys</label>
+				</div>
+				<div class="form-group">
+					<input type="checkbox" id="cookies">
+					<label for="cookies">Girls</label>
+				</div>
+			</form>
+		</div>
+		<div class="py-2 ml-3 bottom ml-3" style="margin-top: 25px;">
+			<h6 class="font-weight-bold">Khoảng giá</h6>
+			<div id="orange"><span class="fa fa-minus"></span></div>
+			<form style="padding-top: 10px;">
+				<div class="form-group">
+					<input type="checkbox" id="price1" name="price" value="1000000" data-price="1">
+					<label for="price1">Dưới 1.000.000đ</label>
+				</div>
+				<div class="form-group">
+					<input type="checkbox" id="price2" name="price" value="2700000" data-price="2">
+					<label for="price2">1.001.00đ-2.700.000</label>
+				</div>
+				<div class="form-group">
+					<input type="checkbox" id="price3" name="price" value="3999000" data-price="3">
+					<label for="price3">2.701.000-3.999.000</label>
+				</div>
+				<div class="form-group">
+					<input type="checkbox" id="price4" name="price" value="4000000" data-price="4">
+					<label for="price4">Trên 4.000.000đ</label>
+				</div>
+			</form>
+		</div>
+		<hr>
+		<div class="py-2 ml-3 bottom ml-3" style="margin-top: 25px;">
+			<h6 class="font-weight-bold">Brand</h6>
+			<div id="orange"><span class="fa fa-minus"></span></div>
+			<form style="padding-top: 10px;">
+				<div class="form-group">
+					<input type="checkbox" id="25off">
+					<label for="25">Nike Sportswear</label>
+				</div>
+				<div class="form-group">
+					<input type="checkbox" id="5off">
+					<label for="5off" id="off">Jordan</label>
+				</div>
+				<div class="form-group">
+					<input type="checkbox" id="5off">
+					<label for="5off" id="off">Nike by you</label>
+				</div>
+				<div class="form-group">
+					<input type="checkbox" id="5off">
+					<label for="5off" id="off">ACG</label>
+				</div>
+				<div class="form-group">
+					<input type="checkbox" id="5off">
+					<label for="5off" id="off">Nike Pro</label>
+				</div>
+			</form>
+		</div>
+		<hr>
+		<div class="py-2 ml-3 bottom ml-3" style="margin-top: 25px;">
+			<h6 class="font-weight-bold">Sports</h6>
+			<div id="orange"><span class="fa fa-minus"></span></div>
+			<form id="filter-form" style="padding-top: 10px;">
+				<div class="form-group">
+					<input type="checkbox" id="name1" name="selectedValues" value="Lifestyle">
+					<label for="Lifestyle">Lifestyle</label>
+				</div>
+				<div class="form-group">
+					<input type="checkbox" id="name2" name="selectedValues" value="Running">
+					<label for="Running">Running</label>
+				</div>
+				<div class="form-group">
+					<input type="checkbox" id="name3" name="selectedValues" value="Trainning & Gym">
+					<label for="5off" id="off">Training & Gym</label>
+				</div>
+				<div class="form-group">
+					<input type="checkbox" id="name4" name="selectedValues" value="Basketball">
+					<label for="5off" id="off">Basketball</label>
+				</div>
+				<div class="form-group">
+					<input type="checkbox" id="name5" name="selectedValues" value="Football">
+					<label for="5off" id="off">Football</label>
+				</div>
+				<div class="form-group">
+					<input type="checkbox" id="name6" name="selectedValues" value="Yoga">
+					<label for="5off" id="off">Yoga</label>
+				</div>
+				<div class="form-group">
+					<input type="checkbox" id="name7" name="selectedValues" value="Yoga">
+					<label for="5off" id="off">Golf</label>
+				</div>
+				<div class="form-group">
+					<input type="checkbox" id="name8" name="selectedValues" value="Tenis">
+					<label for="5off" id="off">Tenis</label>
+				</div>
+				<div class="form-group">
+					<input type="checkbox" id="name9" name="selectedValues" value="Dance">
+					<label for="5off" id="off">Dance</label>
+				</div>
+			</form>
+		</div>
+		<hr>
+		<div class="py-2 ml-3 bottom ml-3" style="margin-top: 25px;">
+			<h6 class="font-weight-bold">Màu sắc</h6>
+			<div id="orange"><span class="fa fa-minus"></span></div>
+			<form style="padding-top: 10px;">
+				<div class="" style="float: left;">
+					<button type="button" class="color-button color-red" style="background-color: rgb(205, 9, 9); width: 25px; height: 25px; border-radius: 50%; border: none;"></button>
+					<p style="font-size: 11px; padding-left: 5px;">Đỏ</p>
+				</div>
+				<div class="" style="float: left; padding-left: 10px;">
+					<button type="button" class="color-button color-black" style="background-color: black; width: 25px; height: 25px; border-radius: 50%; border: none;"></button>
+					<p style="font-size: 11px; padding-left: 5px;">Đen</p>
+				</div>
+				<div class="" style="float: left; padding-left: 10px;">
+					<button type="button" class="color-button color-orange" style="background-color: orange; width: 25px; height: 25px; border-radius: 50%; border: none;"></button>
+					<p style="font-size: 11px; padding-left: 5px;">Vàng</p>
+				</div>
+				<div class="" style="float: left; padding-left: 10px;">
+					<button type="button" class="color-button color-violet" style="background-color: violet; width: 25px; height: 25px; border-radius: 50%; border: none;"></button>
+					<p style="font-size: 11px; padding-left: 5px;">Tím</p>
+				</div>
+				<br>
+				<div class="" style="float: right; padding-top: 15px; padding-right: 69px;">
+					<button type="button" class="color-button color-green" style="background-color: green; width: 25px; height: 25px; border-radius: 50%; border: none;"></button>
+					<p style="font-size: 11px; padding-left: 5px;">Xanh</p>
+				</div>
+				<div class="" style="float: right; padding-right: 7px; padding-top: 15px">
+					<button type="button" class="color-button color-white" style="background-color: white; width: 25px; height: 25px; border-radius: 50%; border: 1px solid rgb(120, 117, 117);"></button>
+					<p style="font-size: 11px; padding-left: 5px;">Trắng</p>
+				</div>
+				<div class="" style="float: right; padding-right: 8px; padding-top: 15px">
+					<button type="button" class="color-button color-orange" style="width: 25px; height: 25px; background-color: rgb(255, 85, 23); border-radius: 50%; border: 1px solid rgb(120, 117, 117);"></button>
+					<p style="font-size: 11px; padding-left: 5px;">Cam</p>
+				</div>
+				<div class="" style="float: right; padding-right: 9px; padding-top: 15px">
+					<button type="button" class="color-button color-brown" style="width: 25px; height: 25px; background-color: brown; border-radius: 50%; border: 1px solid rgb(120, 117, 117);"></button>
+					<p style="font-size: 11px; padding-left: 5px;">Nâu</p>
+				</div>
+			</form>
+		</div>
+	</section>
+	<!-- products section -->
+	<section id="products" style="float: right">
+		<div class="container mt-4 d-flex justify-content-center" style="padding-top: 15px;">
+			<div class="row g-0">
+				@foreach (var item in Model)
+				{
+					<div class="col-sm-6 col-md-4" style="padding-top: 5px;">
+						<div class="cards">
+							<div class="first bg-white p-4 text-center">
+								<a href="@Url.Action("DetailsProduct", "Home", new { id = item.ShoesDetailsId })"><img src="@Url.Content("~/image/" + item.ImageUrl)" style="width: 100%;"></a>
+								<h5 style="padding-top: 5px;">@ViewBag.NameSP</h5>
+								<p class="line1">@Html.DisplayFor(modelItem => item.Description)</p>
+								<p style="font-size: 13px;">@Html.DisplayFor(modelItem => item.Price)</p>
+								<button class="btnok">Thêm vào giỏ hàng</button>
+							</div>
+						</div>
+					</div>
+				}
+			</div>
+		</div>
+	</section>
+	<footer class="footer" style="margin-top: 200px;">
+		<!-- Copyright -->
+		<div class="text-center p-3" style="background-color: white; color: white;">
+			© 2022
+			<a class="text-white" href="#" style="text-decoration: none;">
+				Nike, Inc. All Rights
+				Reserved - PH24890
+			</a>
+		</div>
+		<!-- Copyright -->
+	</footer>
+	<!-- <footer class="footer">My footer</footer> -->
+</body>
+
+</html>
