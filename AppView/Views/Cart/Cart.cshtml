@@ -1,4 +1,5 @@
-﻿@{
+﻿@model List<CartItemViewModel>
+@{
     ViewData["Title"] = "Giỏ hàng";
 }
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -9,9 +10,9 @@
             <div class="col-md-8">
                 <div class="card mb-4" style="border: 1px solid white;">
                     <div class="card-header py-3">
-                        <h5 class="mb-0">Bag</h5>
+                        <h5 class="mb-0">Cart</h5>
                     </div>
-                    @if (!Model.CartItems.Any())
+                    @if (!Model.Any())
                     {
                         <h6 style="margin-top:10px; margin-left:15px;">There are no items in your bag.</h6>
                     }
@@ -20,12 +21,12 @@
                     <div class="card-body">
                         <!-- Single item -->
                         <div class="row">
-                            @foreach (var item in Model.CartItems)
+                            @foreach (var item in Model)
                             { 
                                 <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
                                     <!-- Image -->
                                     <div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
-                                        <img src="@item.ProductImage" class="w-100" alt="Blue Jeans Jacket"/>
+                                        <img src="@Url.Content("~/image/" + item.ProductImage)" class="w-100" alt="Blue Jeans Jacket" />
                                         <a href="#!">
                                             <div class="mask" style="background-color: rgba(251, 251, 251, 0.2)"></div>
                                         </a>
@@ -38,26 +39,26 @@
                                     <p><strong>@item.ProductName</strong></p>
                                     <p>@item.Description</p>
                                     <p>Size @item.Size</p>
-                                    <form id="removeCartItemForm_@item.ProductId" method="post" action="@Url.Action("RemoveCartItem", "CartDetail")">
-                                        <input type="hidden" name="id" value="@item.ProductId" />
+                                    <form id="removeCartItemForm_@item.ShoesDetailsID" method="post" action="@Url.Action("RemoveCartItem", "Cart")">
+                                        <input type="hidden" name="id" value="@item.ShoesDetailsID" />
                                     </form>
                                     <!-- Button to remove cart item -->
                                     <button type="button" class="btn btn-primary btn-sm me-1 mb-2" data-mdb-toggle="tooltip"
                                     title="Remove item"
-                                    onclick="document.getElementById('removeCartItemForm_@item.ProductId').submit();">
+                                    onclick="document.getElementById('removeCartItemForm_@item.ShoesDetailsID').submit();">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
                                     <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
                                         <!-- Quantity -->
                                         <div class="d-flex mb-4" style="max-width: 300px">
-                                            <button style="height: 37px; border-radius: 4px;" class="btn btn-primary px-3 me-2" onclick="decrementQuantity(this)" data-id="@item.ProductId" data-price="@item.Price">
+                                            <button style="height: 37px; border-radius: 4px;" class="btn btn-primary px-3 me-2" onclick="decrementQuantity(this)" data-id="@item.ShoesDetailsID" data-price="@item.Price">
                                                 <i class="fas fa-minus"></i>
                                             </button>
                                             <div class="form-outline">
-                                                <input id="quantity" min="1" max="99" name="quantity" value="@item.Quantity" type="number" class="form-control quantity" data-price="@item.Price" data-id="@item.ProductId" onchange="calculateTotalPrice(@item.Quantity)" />
+                                                <input id="quantity" min="1" max="99" name="quantity" value="@item.Quantity" type="number" class="form-control quantity" data-price="@item.Price" data-id="@item.ShoesDetailsID" onchange="calculateTotalPrice(@item.Quantity)" />
                                             </div>
-                                            <button style="height: 37px; border-radius: 4px;" class="btn btn-primary px-3 ms-2" onclick="incrementQuantity(this)" data-id="@item.ProductId" data-price="@item.Price">
+                                            <button style="height: 37px; border-radius: 4px;" class="btn btn-primary px-3 ms-2" onclick="incrementQuantity(this)" data-id="@item.ShoesDetailsID" data-price="@item.Price">
                                                 <i class="fas fa-plus"></i>
                                             </button>
                                         </div>
@@ -173,7 +174,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="MaHD">Mã HD:</label>
-                                    <strong id="MaHD" name="MaHD">@Model.CartItems.FirstOrDefault()?.MaHD</strong>
+                                    <strong id="MaHD" name="MaHD">@Model.FirstOrDefault()?.MaHD</strong>
                                 </div>
                                 <div class="form-group">
                                     <label for="name">Name:</label>
@@ -236,23 +237,6 @@
                     $("#date").val(today).prop('disabled', true);
                 });
             </script>
-@*            <script>
-                let totalPrice = 0; // khởi tạo biến tổng giá tiền của các sản phẩm trong giỏ hàng
-                const cartItems = document.querySelectorAll('.col-lg-4'); // lấy tất cả các sản phẩm trong giỏ hàng
-                cartItems.forEach(function (item) {
-                    const priceElement = item.querySelector('.total-price'); // lấy giá tiền của sản phẩm
-                    const priceText = priceElement.innerText;
-                    const regex = /[\D]+/g; // sử dụng biểu thức chính quy để lấy ra các ký tự không phải số từ chuỗi
-                    const price = parseFloat(priceText.replace(regex, '')); // xóa các ký tự không phải số và chuyển đổi thành một số
-                    // chuyển đổi giá tiền sang kiểu số và bỏ đi ký hiệu $
-                    totalPrice += price; // cộng thêm giá tiền của sản phẩm vào biến tổng
-                });
-                // Điền tổng giá tiền vào các phần tử tương ứng trên trang web
-                const cartTotalSub = document.querySelector('.cart-total-sub');
-                const cartTotalAll = document.querySelector('.cart-total-all');
-                cartTotalSub.innerText = totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }); // hiển thị tổng giá tiền vào phần subtotal
-                cartTotalAll.innerText = totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }); // hiển thị tổng giá tiền vào phần total
-            </script>*@
         </div>
     </div>
 </section>

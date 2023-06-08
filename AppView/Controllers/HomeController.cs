@@ -1,4 +1,8 @@
-﻿using AppData.Models;
+﻿using AppData.IRepositories;
+using AppData.IServices;
+using AppData.Models;
+using AppData.Repositories;
+using AppData.Services;
 using AppView.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,10 +13,16 @@ namespace AppView.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-        public HomeController(ILogger<HomeController> logger)
+        private readonly ShopDBContext _shopDBContext;
+        private readonly IShoesDetailsService _shoesDT;
+        private readonly IProductService _product;
+        private readonly IImageService _image;
+        public HomeController()
         {
-            _logger = logger;
+            _shopDBContext = new ShopDBContext();
+            _shoesDT = new ShoesDetailsService();
+            _product = new ProductService();
+            _image = new ImageService();
         }
         public IActionResult Index()
         {
@@ -26,16 +36,16 @@ namespace AppView.Controllers
         {
             using (var dbContext = new ShopDBContext())
             {
-                var shoesList = dbContext.ShoesDetails.ToList();
+                var shoesList = _shoesDT.GetAllShoesDetails();
                 foreach (var shoes in shoesList)
                 {
                     //kiểm tra trong db có thg image nào đã chứa thằng ShoesDetails tương ứng chưa, nếu tồn tại rồi gán cho thuộc tính imageUrl giá trị của link ảnh đó
-                    var firstImage = dbContext.Images.FirstOrDefault(i => i.ShoesDetailsID == shoes.ShoesDetailsId);
+                    var firstImage = _image.GetAllImages().FirstOrDefault(c => c.ShoesDetailsID == shoes.ShoesDetailsId);
                     if (firstImage != null)
                     {
                         shoes.ImageUrl = firstImage.Image1;
                     }
-                    var nameProduct = dbContext.Products.FirstOrDefault(c => c.ProductID == shoes.ProductID);
+                    var nameProduct = _product.GetAllProducts().FirstOrDefault(c => c.ProductID == shoes.ProductID);
                     if (nameProduct != null)
                     {
                         ViewBag.NameSP = nameProduct.Name;
@@ -46,19 +56,18 @@ namespace AppView.Controllers
         }
         public IActionResult DetailsProduct(Guid id)
         {
-            ShopDBContext shopDBContext = new ShopDBContext();
-            var productDT = shopDBContext.ShoesDetails.Find(id);
-            var NameProduct = shopDBContext.Products.FirstOrDefault(c => c.ProductID == productDT.ProductID);
+            var ShoesDT = _shoesDT.GetAllShoesDetails().FirstOrDefault(c => c.ShoesDetailsId == id);
+            var NameProduct = _product.GetAllProducts().FirstOrDefault(c => c.ProductID == ShoesDT.ProductID);
             if (NameProduct != null )
             {
                 ViewBag.nameProduct = NameProduct.Name;
             }
-            var ImageGoldens = shopDBContext.Images.First(c => c.ShoesDetailsID == id);
+            var ImageGoldens = _image.GetAllImages().FirstOrDefault(c => c.ShoesDetailsID == id);
             ViewBag.ImageGolden1 = ImageGoldens.Image1;
             ViewBag.ImageGolden2 = ImageGoldens.Image2;
             ViewBag.ImageGolden3 = ImageGoldens.Image3;
             ViewBag.ImageGolden4 = ImageGoldens.Image4;
-            return View(productDT);
+            return View(ShoesDT);
         }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
