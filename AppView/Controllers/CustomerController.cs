@@ -103,7 +103,35 @@ namespace AppView.Controllers
             }
         }
 
-
+        public IActionResult SignUp()
+        {
+            
+            return View();
+        }
+        [HttpPost]
+        public IActionResult SignUp(Customer customer, string ConfirmPassword)
+        {
+            if (customer.Password != ConfirmPassword)
+            {
+                return View();
+            }
+            else
+            if (_repos.GetAll().Any(c => c.UserName == customer.UserName))
+            {
+                return Json(new { success = false, message = "Tên đăng nhập đã tồn tại" });
+            }
+            else
+                customer.PhoneNumber = "000000000";
+            //user.DiaChi = "OK";
+            if (_repos.AddItem(customer))
+            {
+                TempData["UserName"] = customer.UserName;
+                TempData["Password"] = customer.Password;
+                TempData["SignUpSuccess"] = "Đăng ký tài khoản thành công!";
+                return Json(new { success = true, redirectUrl = Url.Action("Login", "Customer") });
+            }
+            else return BadRequest();
+        }
         public IActionResult DangNhap()
         {
             return View();
