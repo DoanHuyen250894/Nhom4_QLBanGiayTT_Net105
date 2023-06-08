@@ -1,9 +1,13 @@
-﻿using AppData.IRepositories;
+﻿using System.Net.Mail;
+using System.Net;
+using AppData.IRepositories;
 using AppData.Models;
 using AppData.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace AppView.Controllers
 { 
@@ -74,6 +78,54 @@ namespace AppView.Controllers
             //    return RedirectToAction("GetAllCustomer");
             //}
             //else return Content("Error");
+        }
+
+        public IActionResult Login()
+        {
+            ViewBag.SignUpSuccess = TempData["SignUpSuccess"];
+            return View();
+        }
+        [HttpPost]
+        public IActionResult Login(Customer customer)
+        {
+            var loggedInUser = _repos.GetAll().FirstOrDefault(c => c.UserName == customer.UserName && c.Password == customer.Password);
+            if (loggedInUser != null)
+            {
+                HttpContext.Session.SetString("UserId", JsonConvert.SerializeObject(loggedInUser.CumstomerID.ToString()));
+                HttpContext.Session.SetString("UserName", JsonConvert.SerializeObject(loggedInUser.UserName));
+                
+                TempData["SignUpSuccess"] = "Đăng nhập thành công!";
+                return Json(new { success = true, redirectUrl = Url.Action("Index", "Home") });
+            }
+            else
+            {
+                return Json(new { success = false, message = "Vui lòng nhập đúng thông tin tài khoản" });
+            }
+        }
+
+
+        public IActionResult DangNhap()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult DangNhap(Customer customer)
+        {
+            if (customer.UserName.Length <= 6 || customer.Password.Length <= 6)
+            {
+                return Content("User Name va Password phai dai hon 6 ky tu");
+            }
+            Regex regex = new Regex("^[a-zA-Z0-9]+$");
+            if (!regex.IsMatch(customer.UserName) || !regex.IsMatch(customer.Password))
+            {
+                return Content("User Name và Password chỉ được chứa chữ cái và số.");
+            }
+            return RedirectToAction("Index", "Home");
+        }
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }
