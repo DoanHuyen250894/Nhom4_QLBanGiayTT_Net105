@@ -115,8 +115,41 @@ namespace AppView.Controllers
                 return Json(new { success = false, message = "Vui lòng nhập đúng thông tin tài khoản" });
             }
         }
-
-
+        public IActionResult SignUp()
+        {
+            using (ShopDBContext shopDBContext = new ShopDBContext())
+            {
+                var role = shopDBContext.Roles.ToList();
+                SelectList selectListsRole = new SelectList(role, "RoleID", "RoleName");
+                ViewBag.ListRole = selectListsRole;
+            }
+            return View();
+        }
+        [HttpPost]
+        public IActionResult SignUp(Employee employee, string ConfirmPassword)
+        {
+            if (employee.Password != ConfirmPassword)
+            {
+                return View();
+            }
+            else
+            if (_repos.GetAll().Any(c => c.FullName == employee.FullName))
+            {
+                return Json(new { success = false, message = "Tên đăng nhập đã tồn tại" });
+            }
+            else
+                employee.PhoneNumber = "000000000";
+            //user.DiaChi = "OK";
+            if (_repos.AddItem(employee))
+            {
+                TempData["UserName"] = employee.FullName;
+                TempData["Password"] = employee.Password;
+                TempData["SignUpSuccess"] = "Đăng ký tài khoản thành công!";
+                return Json(new { success = true, redirectUrl = Url.Action("Login", "Employee") });
+            }
+            else return BadRequest();
+        }
+       
         public IActionResult DangNhap()
         {
             return View();
