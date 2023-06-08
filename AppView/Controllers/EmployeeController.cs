@@ -1,4 +1,6 @@
-﻿using AppData.IRepositories;
+﻿using System.Diagnostics;
+using System.Text.RegularExpressions;
+using AppData.IRepositories;
 using AppData.Models;
 using AppData.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -90,5 +92,54 @@ namespace AppView.Controllers
             //{
             //    return Content("Error");
         }
+
+        public IActionResult Login()
+        {
+            ViewBag.SignUpSuccess = TempData["SignUpSuccess"];
+            return View();
+        }
+        [HttpPost]
+        public IActionResult Login(Employee customer)
+        {
+            var loggedInUser = _repos.GetAll().FirstOrDefault(c => c.FullName == customer.FullName && c.Password == customer.Password);
+            if (loggedInUser != null)
+            {
+                HttpContext.Session.SetString("EmployeeID", JsonConvert.SerializeObject(loggedInUser.EmployeeID.ToString()));
+                HttpContext.Session.SetString("FullName", JsonConvert.SerializeObject(loggedInUser.FullName));
+
+                TempData["SignUpSuccess"] = "Đăng nhập thành công!";
+                return Json(new { success = true, redirectUrl = Url.Action("Index", "Home") });
+            }
+            else
+            {
+                return Json(new { success = false, message = "Vui lòng nhập đúng thông tin tài khoản" });
+            }
+        }
+
+
+        public IActionResult DangNhap()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult DangNhap(Employee customer)
+        {
+            if (customer.FullName.Length <= 6 || customer.Password.Length <= 6)
+            {
+                return Content("FullName va Password phai dai hon 6 ky tu");
+            }
+            Regex regex = new Regex("^[a-zA-Z0-9]+$");
+            if (!regex.IsMatch(customer.FullName) || !regex.IsMatch(customer.Password))
+            {
+                return Content("User Name và Password chỉ được chứa chữ cái và số.");
+            }
+            return RedirectToAction("Index", "Home");
+        }
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
     }
 }
