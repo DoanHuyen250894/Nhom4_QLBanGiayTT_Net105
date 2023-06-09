@@ -21,7 +21,7 @@ namespace AppData.Configurations
             builder.Property(c => c.Email).HasColumnType("nvarchar(300)");
             builder.Property(c => c.Sex).HasColumnType("int");
             builder.Property(c => c.PhoneNumber).HasColumnType("nvarchar(50)");
-            builder.Property(c => c.ResetPassword).HasColumnType("nvarchar(50)");
+            builder.Property(c => c.ResetPassword).HasColumnType("nvarchar(60)");
             builder.Property(c => c.Status).HasColumnType("int");
             builder.HasOne(c => c.Cart).WithOne(c => c.Customer).HasForeignKey<Cart>(c => c.CumstomerID);
         }
