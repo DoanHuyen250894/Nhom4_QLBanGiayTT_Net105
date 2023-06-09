@@ -155,5 +155,126 @@ namespace AppView.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult ForgotPassword(string Email)
+        {
+            try
+            {
+                var customer = _repos.GetAll().FirstOrDefault(c => c.Email == Email);
+                if (customer == null)
+                {
+                    return Json(new { success = false, message = "Email không tồn tại" });
+                }
+                var randomCode = GenerateToken();
+                var subject = "Mã xác nhận đổi mật khẩu tài khoản Nike&08Pt";
+                var body = $"Mã xác nhận của bạn là: {randomCode}";
+                // Gửi email
+                GuiMail(customer.Email, subject, body);
+                // Cập nhật mã xác nhận mới cho nhân viên
+                customer.ResetPassword = randomCode;
+                _repos.EditItem(customer);
+                TempData["SignUpSuccess"] = "Mã xác nhận đã được gửi, vui lòng kiểm tra hòm thư!";
+                //return Json(new { success = true, message = "Gửi mail thành công" });
+                return RedirectToAction("VerificationCode");
+            }
+            catch
+            {
+                return Json(new { success = false, message = "Có lỗi xảy ra khi gửi mail. Hãy thử lại sau" });
+            }
+        }
+        public string GenerateToken()
+        {
+            var random = new Random();
+            return random.Next(100000, 999999).ToString();
+        }
+        public void GuiMail(string Email, string subject, string body)
+        {
+            var message = new MailMessage();
+            message.From = new MailAddress("vuduy10a7@gmail.com");
+            message.To.Add(Email);
+            message.Subject = subject;
+            message.Body = body;
+            message.IsBodyHtml = true;
+
+            var smtpClient = new SmtpClient("smtp.gmail.com", 587);
+            smtpClient.UseDefaultCredentials = false;
+            smtpClient.EnableSsl = true;
+            smtpClient.Credentials = new NetworkCredential("vuduy10a7@gmail.com", "yzcgeyulyergpmjw");
+
+            // Thêm lệnh ghi log
+            smtpClient.SendCompleted += (sender, args) =>
+            {
+                if (args.Error != null)
+                {
+                    // Ghi log lỗi
+                    Console.WriteLine($"Lỗi gửi email: {args.Error.Message}");
+                }
+                else if (args.Cancelled)
+                {
+                    // Ghi log hủy bỏ gửi email
+                    Console.WriteLine("Gửi email bị hủy bỏ.");
+                }
+                else
+                {
+                    // Ghi log gửi email thành công
+                    Console.WriteLine("Gửi email thành công.");
+                }
+            };
+            smtpClient.Send(message);
+        }
+        public IActionResult VerificationCode()
+        {
+            ViewBag.SignUpSuccess = TempData["SignUpSuccess"];
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult VerificationCode(string CodeXacThuc)
+        {
+            var customer = _repos.GetAll().FirstOrDefault(c => c.ResetPassword == CodeXacThuc);
+            if (customer == null)
+            {
+                // Nếu không tìm thấy user với mã xác thực này, hiển thị thông báo lỗi.
+                TempData["ErrorMessage"] = "Mã xác thực không hợp lệ.";
+                return View();
+            }
+            // Kiểm tra mã xác thực
+            if (customer.ResetPassword != CodeXacThuc)
+            {
+                TempData["ErrorMessage"] = "Mã xác thực không đúng.";
+                return View();
+            }
+            // Nếu mã xác thực đúng, chuyển hướng tới trang cập nhật mật khẩu
+            HttpContext.Session.SetString("ResetPasswordUserName", customer.UserName);
+            return RedirectToAction("UpdatePassword");
+        }
+        public IActionResult UpdatePassword()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult UpdatePassword(string password)
+        {
+            var username = HttpContext.Session.GetString("ResetPasswordUserName");
+            Console.WriteLine("Username from HttpContext: " + username); // Thêm log để ghi lại thông tin đăng nhập được lấy từ HttpContext
+            var customer = _repos.GetAll().FirstOrDefault(c => c.UserName == username);
+            if (customer == null)
+            {
+                TempData["ErrorMessage"] = "User không tồn tại";
+                return View();
+            }
+            customer.Password = password;
+            _repos.EditItem(customer);
+            TempData["UserName"] = customer.UserName;
+            TempData["Password"] = customer.Password;
+            TempData["SignUpSuccess"] = "Mật khẩu đã được cập nhật thành công!";
+            return RedirectToAction("Login", "Customer");
+        }
+
     }
 }
