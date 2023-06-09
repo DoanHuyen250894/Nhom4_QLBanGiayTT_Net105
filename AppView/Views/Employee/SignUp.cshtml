@@ -42,21 +42,9 @@
                                         <span asp-validation-for="FullName" class="text-danger"></span>
                                     </div>
                                     <div class="form-floating mb-3">
-                                        <label style="display:none;" asp-for="Role" class="control-label">Role</label>
+                                        <label  asp-for="Role" class="control-label">Role</label>
                                         <select  asp-for="RoleID" class="form-control" asp-items="@ViewBag.ListRole">
-                                            @{
-                                                foreach (var item in ViewBag.ListRole)
-                                                {
-                                                    if (item.Value == "ffe59fce-7c7c-40c2-a7d9-53b14fc35303") // id của phần tử thứ 2
-                                                    {
-                                                        <option value="@item.Value" selected="selected">@item.Text</option>
-                                                    }
-                                                    else
-                                                    {
-                                                        <option value="@item.Value">@item.Text</option>
-                                                    }
-                                                }
-                                            }
+                                           
                                         </select>
                                     </div>
                                     
