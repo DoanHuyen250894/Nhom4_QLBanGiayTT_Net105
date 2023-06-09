@@ -151,11 +151,7 @@ namespace AppView.Controllers
             }
             else return BadRequest();
         }
-        public string GenerateToken()
-        {
-            var random = new Random();
-            return random.Next(100000, 999999).ToString();
-        }
+       
         public IActionResult ForgotPassword()
         {
             return View();
@@ -187,19 +183,24 @@ namespace AppView.Controllers
                 return Json(new { success = false, message = "Có lỗi xảy ra khi gửi mail. Hãy thử lại sau" });
             }
         }
+        public string GenerateToken()
+        {
+            var random = new Random();
+            return random.Next(100000, 999999).ToString();
+        }
         public void GuiMail(string Email, string subject, string body)
         {
             var message = new MailMessage();
-            message.From = new MailAddress("huongdang295203@gmail.com");
+            message.From = new MailAddress("vuduy10a7@gmail.com");
             message.To.Add(Email);
             message.Subject = subject;
             message.Body = body;
             message.IsBodyHtml = true;
-
+                    
             var smtpClient = new SmtpClient("smtp.gmail.com", 587);
             smtpClient.UseDefaultCredentials = false;
             smtpClient.EnableSsl = true;
-            smtpClient.Credentials = new NetworkCredential("huongdang295203@gmail.com", "yzcgeyulyergpmjw");
+            smtpClient.Credentials = new NetworkCredential("vuduy10a7@gmail.com", "yzcgeyulyergpmjw");
 
             // Thêm lệnh ghi log
             smtpClient.SendCompleted += (sender, args) =>
