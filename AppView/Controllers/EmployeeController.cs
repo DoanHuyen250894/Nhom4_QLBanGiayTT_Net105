@@ -110,7 +110,7 @@ namespace AppView.Controllers
                 HttpContext.Session.SetString("FullName", JsonConvert.SerializeObject(loggedInUser.FullName));
 
                 TempData["SignUpSuccess"] = "Đăng nhập thành công!";
-                return Json(new { success = true, redirectUrl = Url.Action("Index", "Home") });
+                return Json(new { success = true, redirectUrl = Url.Action("Index", "Home") }); 
             }
             else
             {
@@ -287,6 +287,11 @@ namespace AppView.Controllers
                 return Content("User Name và Password chỉ được chứa chữ cái và số.");
             }
             return RedirectToAction("Index", "Home");
+        }
+        public IActionResult LogOut()
+        {
+            HttpContext.Session.Remove("FullName");
+            return RedirectToAction("Login");
         }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

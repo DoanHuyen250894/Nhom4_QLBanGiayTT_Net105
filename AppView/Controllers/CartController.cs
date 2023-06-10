@@ -106,3 +106,8 @@ namespace AppView.Controllers
         }
     }
 }
+//if (!HttpContext.Session.TryGetValue("EmployeeID", out _))
+//{
+//    // Người dùng chưa đăng nhập, chuyển hướng đến trang đăng nhập hoặc hiển thị thông báo lỗi.
+//    return RedirectToAction("Login", "Employee");
+//}
