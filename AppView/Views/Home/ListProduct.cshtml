@@ -1,6 +1,8 @@
-﻿@model IEnumerable<AppData.Models.ShoesDetails>
+﻿@using AppData.Models;
+@model IEnumerable<AppData.Models.ShoesDetails>
 @{
 	ViewData["Title"] = "Sản phẩm";
+	var shoesDetails = ViewBag.shoesList as List<ShoesDetails>;
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -32,87 +34,145 @@
 		<div class="py-2 border-bottom ml-3" style="margin-top: 25px;">
 			<h6 class="font-weight-bold">Giới tính</h6>
 			<div id="orange"><span class="fa fa-minus"></span></div>
-			<form style="padding-top: 10px;">
+			<form asp-controller="Home" asp-action="SexFilter" method="post" style="padding-top: 10px;">
 				<div class="form-group">
-					<input type="checkbox" id="artisan">
-					<label for="artisan">Nam</label>
+					<input type="checkbox" name="genders" id="male" value="male">
+					<label for="male" id="male">Nam</label>
 				</div>
 				<div class="form-group">
-					<input type="checkbox" id="breakfast">
-					<label for="breakfast">Nữ</label>
+					<input type="checkbox" name="genders" id="female" value="female">
+					<label for="female" id="female">Nữ</label>
 				</div>
 				<div class="form-group">
-					<input type="checkbox" id="healthy">
-					<label for="healthy">Unisex</label>
+					<input type="checkbox" name="genders" id="unisex" value="unisex">
+					<label for="unisex" id="unisex">Unisex</label>
 				</div>
+				<div class="form-group">
+					<button type="submit">Submit</button>
+				</div>
+				
 			</form>
 		</div>
+
+		
+
 		<div class="py-2 border-bottom ml-3" style="margin-top: 25px;">
-			<h6 class="font-weight-bold">Kids</h6>
+			<h6 class="font-weight-bold">Cỡ giày</h6>
 			<div id="orange"><span class="fa fa-minus"></span></div>
 			<form style="padding-top: 10px;">
 				<div class="form-group">
-					<input type="checkbox" id="tea">
-					<label for="tea">Boys</label>
+					<input type="radio" id="size39" name="size" value="39">
+					<label for="size39" id="size39">39</label>
 				</div>
 				<div class="form-group">
-					<input type="checkbox" id="cookies">
-					<label for="cookies">Girls</label>
+					<input type="radio" id="size40" name="size" value="40">
+					<label for="size40" id="size40">40</label>
+				</div>
+				<div class="form-group">
+					<input type="radio" id="size41" name="size" value="41">
+					<label for="size41" id="size41">41</label>
+				</div>
+				<div class="form-group">
+					<input type="radio" id="size42" name="size" value="42">
+					<label for="size42" id="size42">42</label>
+				</div>
+				<div class="form-group">
+					<input type="radio" id="size43" name="size" value="43">
+					<label for="size43" id="size43">43</label>
+				</div>
+				<div class="form-group">
+					<input type="radio" id="size44" name="size" value="44">
+					<label for="size44" id="size44">44</label>
+				</div>
+				<div class="form-group">
+					<input type="radio" id="size45" name="size" value="45">
+					<label for="size45" id="size45">45</label>
+				</div>
+				<div class="form-group">
+					<input type="radio" id="size46" name="size" value="46">
+					<label for="size46" id="size46">46</label>
+				</div>
+				<div class="form-group">
+					<input type="radio" id="size47" name="size" value="47">
+					<label for="size47" id="size47">47</label>
+				</div>
+				<div class="form-group">
+					<input type="radio" id="size48" name="size" value="48">
+					<label for="size48" id="size48">48</label>
+				</div>
+				<div class="form-group">
+					<input type="radio" id="size49" name="size" value="49">
+					<label for="size49" id="size49">49</label>
 				</div>
 			</form>
 		</div>
+
+		
 		<div class="py-2 ml-3 bottom ml-3" style="margin-top: 25px;">
 			<h6 class="font-weight-bold">Khoảng giá</h6>
 			<div id="orange"><span class="fa fa-minus"></span></div>
 			<form style="padding-top: 10px;">
 				<div class="form-group">
-					<input type="checkbox" id="price1" name="price" value="1000000" data-price="1">
+					<input type="radio" id="price1" name="price" value="1000000" data-price="1">
 					<label for="price1">Dưới 1.000.000đ</label>
 				</div>
 				<div class="form-group">
-					<input type="checkbox" id="price2" name="price" value="2700000" data-price="2">
+					<input type="radio" id="price2" name="price" value="2700000" data-price="2">
 					<label for="price2">1.001.00đ-2.700.000</label>
 				</div>
 				<div class="form-group">
-					<input type="checkbox" id="price3" name="price" value="3999000" data-price="3">
+					<input type="radio" id="price3" name="price" value="3999000" data-price="3">
 					<label for="price3">2.701.000-3.999.000</label>
 				</div>
 				<div class="form-group">
-					<input type="checkbox" id="price4" name="price" value="4000000" data-price="4">
+					<input type="radio" id="price4" name="price" value="4000000" data-price="4">
 					<label for="price4">Trên 4.000.000đ</label>
 				</div>
 			</form>
 		</div>
 		<hr>
 		<div class="py-2 ml-3 bottom ml-3" style="margin-top: 25px;">
-			<h6 class="font-weight-bold">Brand</h6>
+			<h6 class="font-weight-bold">Thương hiệu</h6>
 			<div id="orange"><span class="fa fa-minus"></span></div>
 			<form style="padding-top: 10px;">
 				<div class="form-group">
-					<input type="checkbox" id="25off">
-					<label for="25">Nike Sportswear</label>
+					<input type="radio" name="brand" id="nike">
+					<label for="nike">Nike</label>
 				</div>
 				<div class="form-group">
-					<input type="checkbox" id="5off">
-					<label for="5off" id="off">Jordan</label>
+					<input type="radio" name="brand" id="jordan">
+					<label for="jordan">Jordan</label>
 				</div>
 				<div class="form-group">
-					<input type="checkbox" id="5off">
-					<label for="5off" id="off">Nike by you</label>
+					<input type="radio" name="brand" id="mlb">
+					<label for="mlb">MLB</label>
 				</div>
 				<div class="form-group">
-					<input type="checkbox" id="5off">
-					<label for="5off" id="off">ACG</label>
+					<input type="radio" name="brand" id="adidas">
+					<label for="adidas">Adidas</label>
 				</div>
 				<div class="form-group">
-					<input type="checkbox" id="5off">
-					<label for="5off" id="off">Nike Pro</label>
+					<input type="radio" name="brand" id="reebok">
+					<label for="reebok">Reebok</label>
+				</div>
+				<div class="form-group">
+					<input type="radio" name="brand" id="vans">
+					<label for="vans">Vans</label>
+				</div>
+				<div class="form-group">
+					<input type="radio" name="brand" id="converse">
+					<label for="converse">Converse</label>
+				</div>
+				<div class="form-group">
+					<input type="radio" name="brand" id="puma">
+					<label for="puma">Puma</label>
 				</div>
 			</form>
+
 		</div>
 		<hr>
 		<div class="py-2 ml-3 bottom ml-3" style="margin-top: 25px;">
-			<h6 class="font-weight-bold">Sports</h6>
+			<h6 class="font-weight-bold">Phong cách</h6>
 			<div id="orange"><span class="fa fa-minus"></span></div>
 			<form id="filter-form" style="padding-top: 10px;">
 				<div class="form-group">
@@ -159,43 +219,43 @@
 			<div id="orange"><span class="fa fa-minus"></span></div>
 			<form style="padding-top: 10px;">
 				<div class="" style="float: left;">
-					<button type="button" class="color-button color-red" style="background-color: rgb(205, 9, 9); width: 25px; height: 25px; border-radius: 50%; border: none;"></button>
+					<button type="button" id="redBtn" class="color-button color-red" style="background-color: rgb(205, 9, 9); width: 25px; height: 25px; border-radius: 50%; border: none;"></button>
 					<p style="font-size: 11px; padding-left: 5px;">Đỏ</p>
 				</div>
 				<div class="" style="float: left; padding-left: 10px;">
-					<button type="button" class="color-button color-black" style="background-color: black; width: 25px; height: 25px; border-radius: 50%; border: none;"></button>
+					<button type="button" id="blackBtn" class="color-button color-black" style="background-color: black; width: 25px; height: 25px; border-radius: 50%; border: none;"></button>
 					<p style="font-size: 11px; padding-left: 5px;">Đen</p>
 				</div>
 				<div class="" style="float: left; padding-left: 10px;">
-					<button type="button" class="color-button color-orange" style="background-color: orange; width: 25px; height: 25px; border-radius: 50%; border: none;"></button>
+					<button type="button" id="yellowBtn" class="color-button color-orange" style="background-color: yellow; width: 25px; height: 25px; border-radius: 50%; border: none;"></button>
 					<p style="font-size: 11px; padding-left: 5px;">Vàng</p>
 				</div>
 				<div class="" style="float: left; padding-left: 10px;">
-					<button type="button" class="color-button color-violet" style="background-color: violet; width: 25px; height: 25px; border-radius: 50%; border: none;"></button>
-					<p style="font-size: 11px; padding-left: 5px;">Tím</p>
+					<button type="button" id="pinkBtn" class="color-button color-violet" style="background-color: pink; width: 25px; height: 25px; border-radius: 50%; border: none;"></button>
+					<p style="font-size: 11px; padding-left: 5px;">Hồng</p>
 				</div>
 				<br>
 				<div class="" style="float: right; padding-top: 15px; padding-right: 69px;">
-					<button type="button" class="color-button color-green" style="background-color: green; width: 25px; height: 25px; border-radius: 50%; border: none;"></button>
+					<button type="button" id="greenBtn" class="color-button color-green" style="background-color: green; width: 25px; height: 25px; border-radius: 50%; border: none;"></button>
 					<p style="font-size: 11px; padding-left: 5px;">Xanh</p>
 				</div>
 				<div class="" style="float: right; padding-right: 7px; padding-top: 15px">
-					<button type="button" class="color-button color-white" style="background-color: white; width: 25px; height: 25px; border-radius: 50%; border: 1px solid rgb(120, 117, 117);"></button>
+					<button type="button" id="whiteBtn" class="color-button color-white" style="background-color: white; width: 25px; height: 25px; border-radius: 50%; border: 1px solid rgb(120, 117, 117);"></button>
 					<p style="font-size: 11px; padding-left: 5px;">Trắng</p>
 				</div>
 				<div class="" style="float: right; padding-right: 8px; padding-top: 15px">
-					<button type="button" class="color-button color-orange" style="width: 25px; height: 25px; background-color: rgb(255, 85, 23); border-radius: 50%; border: 1px solid rgb(120, 117, 117);"></button>
+					<button type="button" id="orangeBtn" class="color-button color-orange" style="width: 25px; height: 25px; background-color: rgb(255, 85, 23); border-radius: 50%; border: 1px solid rgb(120, 117, 117);"></button>
 					<p style="font-size: 11px; padding-left: 5px;">Cam</p>
 				</div>
 				<div class="" style="float: right; padding-right: 9px; padding-top: 15px">
-					<button type="button" class="color-button color-brown" style="width: 25px; height: 25px; background-color: brown; border-radius: 50%; border: 1px solid rgb(120, 117, 117);"></button>
+					<button type="button" id="brownBtn" class="color-button color-brown" style="width: 25px; height: 25px; background-color: brown; border-radius: 50%; border: 1px solid rgb(120, 117, 117);"></button>
 					<p style="font-size: 11px; padding-left: 5px;">Nâu</p>
 				</div>
 			</form>
 		</div>
 	</section>
 	<!-- products section -->
-	<section id="products" style="float: right">
+	@*<section id="products" style="float: right">
 		<div class="container mt-4 d-flex justify-content-center" style="padding-top: 15px;">
 			<div class="row g-0">
 				@foreach (var item in Model)
@@ -214,7 +274,29 @@
 				}
 			</div>
 		</div>
+	</section>*@
+
+	<section id="products" style="float: right">
+		<div class="container mt-4 d-flex justify-content-center" style="padding-top: 15px;">
+			<div class="row g-0">
+				@foreach (var item in shoesDetails)
+				{
+					<div class="col-sm-6 col-md-4" style="padding-top: 5px;">
+						<div class="cards">
+							<div class="first bg-white p-4 text-center">
+								<a href="@Url.Action("DetailsProduct", "Home", new { id = item.ShoesDetailsId })"><img src="@Url.Content("~/image/" + item.ImageUrl)" style="width: 100%;"></a>
+								<h5 class="line1">@ViewBag.NameSP</h5>
+								<p class="line1">@Html.DisplayFor(modelItem => item.Description)</p>
+								<p style="font-size: 13px;">@Html.DisplayFor(modelItem => item.Price)</p>
+								<button class="btnok">Thêm vào giỏ hàng</button>
+							</div>
+						</div>
+					</div>
+				}
+			</div>
+		</div>
 	</section>
+	
 	<footer class="footer" style="margin-top: 200px;">
 		<!-- Copyright -->
 		<div class="text-center p-3" style="background-color: white; color: white;">
