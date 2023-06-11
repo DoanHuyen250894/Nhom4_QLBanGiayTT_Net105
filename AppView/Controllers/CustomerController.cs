@@ -275,6 +275,10 @@ namespace AppView.Controllers
             TempData["SignUpSuccess"] = "Mật khẩu đã được cập nhật thành công!";
             return RedirectToAction("Login", "Customer");
         }
-
+        public IActionResult LogOut()
+        {
+            HttpContext.Session.Remove("FullName");
+            return RedirectToAction("Login");
+        }
     }
 }
