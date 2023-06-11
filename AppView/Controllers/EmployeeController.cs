@@ -5,6 +5,8 @@ using System.Text.RegularExpressions;
 using AppData.IRepositories;
 using AppData.Models;
 using AppData.Repositories;
+using AppView.IServices;
+using AppView.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -17,11 +19,13 @@ namespace AppView.Controllers
         private readonly IAllRepositories<Employee> _repos;
         private ShopDBContext _dbContext = new ShopDBContext();
         private DbSet<Employee> _customer;
+        private readonly IRoleService _roleService;
         public EmployeeController()
         {
             _customer = _dbContext.Employees;
             AllRepositories<Employee> all = new AllRepositories<Employee>(_dbContext, _customer);
             _repos = all;
+            _roleService = new RoleService();
         }
         [HttpGet]
         public async Task<IActionResult> GetAllEmployee() 
@@ -104,12 +108,14 @@ namespace AppView.Controllers
         public IActionResult Login(Employee customer)
         {
             var loggedInUser = _repos.GetAll().FirstOrDefault(c => c.FullName == customer.FullName && c.Password == customer.Password);
+            var role = _roleService.GetUserById(loggedInUser.RoleID).RoleName;
             if (loggedInUser != null)
             {
                 HttpContext.Session.SetString("EmployeeID", JsonConvert.SerializeObject(loggedInUser.EmployeeID.ToString()));
                 HttpContext.Session.SetString("FullName", JsonConvert.SerializeObject(loggedInUser.FullName));
 
                 TempData["SignUpSuccess"] = "Đăng nhập thành công!";
+                HttpContext.Session.SetString("role", role);
                 return Json(new { success = true, redirectUrl = Url.Action("Index", "Home") }); 
             }
             else
@@ -290,7 +296,7 @@ namespace AppView.Controllers
         }
         public IActionResult LogOut()
         {
-            HttpContext.Session.Remove("FullName");
+            HttpContext.Session.Remove("FullName");   
             return RedirectToAction("Login");
         }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
