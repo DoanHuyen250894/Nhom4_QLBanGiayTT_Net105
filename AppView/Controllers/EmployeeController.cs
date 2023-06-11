@@ -112,7 +112,7 @@ namespace AppView.Controllers
             if (loggedInUser != null)
             {
                 HttpContext.Session.SetString("EmployeeID", JsonConvert.SerializeObject(loggedInUser.EmployeeID.ToString()));
-                HttpContext.Session.SetString("FullName", JsonConvert.SerializeObject(loggedInUser.FullName));
+                HttpContext.Session.SetString("FullNameEmployee", JsonConvert.SerializeObject(loggedInUser.FullName));
 
                 TempData["SignUpSuccess"] = "Đăng nhập thành công!";
                 HttpContext.Session.SetString("role", role);
@@ -304,6 +304,5 @@ namespace AppView.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-
     }
 }
