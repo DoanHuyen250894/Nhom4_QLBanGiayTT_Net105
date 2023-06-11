@@ -6,6 +6,7 @@ using AppView.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.VisualBasic;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Protocol.Plugins;
 using System.Diagnostics;
 using ErrorViewModel = AppView.Models.ErrorViewModel;
 
@@ -134,6 +135,48 @@ namespace AppView.Controllers
 			{
 				return RedirectToAction("ListProduct");
 			}
+		}
+
+		public IActionResult SizeFilter()
+		{
+			return View("ListProduct");
+		}
+
+		[HttpPost]
+		public IActionResult SizeFilter(string[] sizes)
+		{
+			if(sizes != null && sizes.Length > 0)
+			{
+				var combinedShoesList = new List<ShoesDetails>();
+				var comparingShoesList = _shoesDT.GetAllShoesDetails();
+				foreach (var shoes in comparingShoesList)
+				{
+					//kiểm tra trong db có thg image nào đã chứa thằng ShoesDetails tương ứng chưa, nếu tồn tại rồi gán cho thuộc tính imageUrl giá trị của link ảnh đó
+					var firstImage = _image.GetAllImages().FirstOrDefault(c => c.ShoesDetailsID == shoes.ShoesDetailsId);
+					if (firstImage != null)
+					{
+						shoes.ImageUrl = firstImage.Image1;
+					}
+					var nameProduct = _product.GetAllProducts().FirstOrDefault(c => c.ProductID == shoes.ProductID);
+					if (nameProduct != null)
+					{
+						ViewBag.NameSP = nameProduct.Name;
+					}
+				}
+				for (int size = 35; size <= 49; size++)
+				{
+					if (sizes.Contains(size.ToString()))
+					{
+						var sizesList = _size.GetAllSizes().Where(x => x.Name == size.ToString());
+						List<ShoesDetails> maleShoesList = comparingShoesList.Where(shoes => sizesList.Any(size => size.SizeID == shoes.SizeID)).ToList();
+						combinedShoesList.AddRange(maleShoesList);
+					}
+				}
+
+				ViewBag.shoesList = combinedShoesList;
+				return View("ListProduct");
+			}
+			return View();
 		}
 	}
 }

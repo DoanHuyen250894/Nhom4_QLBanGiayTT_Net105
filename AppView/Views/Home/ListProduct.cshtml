@@ -59,53 +59,22 @@
 		<div class="py-2 border-bottom ml-3" style="margin-top: 25px;">
 			<h6 class="font-weight-bold">Cỡ giày</h6>
 			<div id="orange"><span class="fa fa-minus"></span></div>
-			<form style="padding-top: 10px;">
+			<form asp-controller="Home" asp-action="SizeFilter" method="post" style="padding-top: 10px;">
+				@for (int size = 35; size <= 49; size++)
+				{
+					<div class="form-group">
+						<input type="checkbox" id="size@(size)" name="sizes" value="@(size)">
+						<label for="size@(size)" id="size@(size)">@size</label>
+					</div>
+				}
 				<div class="form-group">
-					<input type="radio" id="size39" name="size" value="39">
-					<label for="size39" id="size39">39</label>
-				</div>
-				<div class="form-group">
-					<input type="radio" id="size40" name="size" value="40">
-					<label for="size40" id="size40">40</label>
-				</div>
-				<div class="form-group">
-					<input type="radio" id="size41" name="size" value="41">
-					<label for="size41" id="size41">41</label>
-				</div>
-				<div class="form-group">
-					<input type="radio" id="size42" name="size" value="42">
-					<label for="size42" id="size42">42</label>
-				</div>
-				<div class="form-group">
-					<input type="radio" id="size43" name="size" value="43">
-					<label for="size43" id="size43">43</label>
-				</div>
-				<div class="form-group">
-					<input type="radio" id="size44" name="size" value="44">
-					<label for="size44" id="size44">44</label>
-				</div>
-				<div class="form-group">
-					<input type="radio" id="size45" name="size" value="45">
-					<label for="size45" id="size45">45</label>
-				</div>
-				<div class="form-group">
-					<input type="radio" id="size46" name="size" value="46">
-					<label for="size46" id="size46">46</label>
-				</div>
-				<div class="form-group">
-					<input type="radio" id="size47" name="size" value="47">
-					<label for="size47" id="size47">47</label>
-				</div>
-				<div class="form-group">
-					<input type="radio" id="size48" name="size" value="48">
-					<label for="size48" id="size48">48</label>
-				</div>
-				<div class="form-group">
-					<input type="radio" id="size49" name="size" value="49">
-					<label for="size49" id="size49">49</label>
+					<button type="submit">Submit</button>
 				</div>
 			</form>
 		</div>
+
+
+
 
 		
 		<div class="py-2 ml-3 bottom ml-3" style="margin-top: 25px;">
