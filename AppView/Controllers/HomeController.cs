@@ -314,8 +314,47 @@ namespace AppView.Controllers
 					}
 				}
 
-				var styleList = _style.GetAllStyles().Where(s => styles.Contains(s.Name.ToLower()));
-				var filteredShoesList = comparingShoesList.Where(shoes => styleList.Any(style => style.StyleID == shoes.StyleID));
+				var stylesList = _style.GetAllStyles().Where(s => styles.Contains(s.Name.ToLower()));
+				var filteredShoesList = comparingShoesList.Where(shoes => stylesList.Any(style => style.StyleID == shoes.StyleID));
+				combinedShoesList.AddRange(filteredShoesList);
+				ViewBag.shoesList = combinedShoesList;
+				return View("ListProduct");
+			}
+			return RedirectToAction("ListProduct");
+		}
+
+		public IActionResult ColorFilter()
+		{
+			return View("ListProduct");
+		}
+
+		[HttpPost]
+		public IActionResult ColorFilter(string[] colors)
+		{
+			if (colors != null || colors.Length > 0)
+			{
+				var combinedShoesList = new List<ShoesDetails>();
+				var comparingShoesList = _shoesDT.GetAllShoesDetails();
+
+				foreach (var shoes in comparingShoesList)
+				{
+					// Check if the ShoesDetails has an associated image in the database
+					var firstImage = _image.GetAllImages().FirstOrDefault(c => c.ShoesDetailsID == shoes.ShoesDetailsId);
+					if (firstImage != null)
+					{
+						shoes.ImageUrl = firstImage.Image1;
+					}
+
+					// Check if the ShoesDetails has an associated product in the database
+					var nameProduct = _product.GetAllProducts().FirstOrDefault(c => c.ProductID == shoes.ProductID);
+					if (nameProduct != null)
+					{
+						ViewBag.NameSP = nameProduct.Name;
+					}
+				}
+
+				var colorsList = _color.GetAllColors().Where(s => colors.Contains(s.Name.ToLower()));
+				var filteredShoesList = comparingShoesList.Where(shoes => colorsList.Any(color => color.ColorID == shoes.ColorID));
 				combinedShoesList.AddRange(filteredShoesList);
 				ViewBag.shoesList = combinedShoesList;
 				return View("ListProduct");
