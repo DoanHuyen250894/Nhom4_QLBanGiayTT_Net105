@@ -6,7 +6,6 @@ using AppView.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.VisualBasic;
 using Microsoft.EntityFrameworkCore;
-using NuGet.Protocol.Plugins;
 using System.Diagnostics;
 using ErrorViewModel = AppView.Models.ErrorViewModel;
 
@@ -145,7 +144,7 @@ namespace AppView.Controllers
 		[HttpPost]
 		public IActionResult SizeFilter(string[] sizes)
 		{
-			if(sizes != null && sizes.Length > 0)
+			if (sizes != null && sizes.Length > 0)
 			{
 				var combinedShoesList = new List<ShoesDetails>();
 				var comparingShoesList = _shoesDT.GetAllShoesDetails();
@@ -176,7 +175,67 @@ namespace AppView.Controllers
 				ViewBag.shoesList = combinedShoesList;
 				return View("ListProduct");
 			}
-			return View();
+			return RedirectToAction("ListProduct");
 		}
+
+		public IActionResult PriceFilter()
+		{
+			return View("ListProduct");
+		}
+
+		[HttpPost]
+		public IActionResult PriceFilter(string[] minPrice)
+		{
+			var combinedShoesList = new List<ShoesDetails>();
+			var comparingShoesList = _shoesDT.GetAllShoesDetails();
+
+			foreach (var shoes in comparingShoesList)
+			{
+				// Check if the ShoesDetails has an associated image in the database
+				var firstImage = _image.GetAllImages().FirstOrDefault(c => c.ShoesDetailsID == shoes.ShoesDetailsId);
+				if (firstImage != null)
+				{
+					shoes.ImageUrl = firstImage.Image1;
+				}
+
+				// Check if the ShoesDetails has an associated product in the database
+				var nameProduct = _product.GetAllProducts().FirstOrDefault(c => c.ProductID == shoes.ProductID);
+				if (nameProduct != null)
+				{
+					ViewBag.NameSP = nameProduct.Name;
+				}
+			}
+
+			foreach (var price in minPrice)
+			{
+				if (int.TryParse(price, out int minprice))
+				{
+					if (minprice == 0)
+					{
+						var shoesList = _shoesDT.GetAllShoesDetails().Where(x => x.Price > minprice && x.Price <= 1000000);
+						combinedShoesList.AddRange(shoesList);
+					}
+					else if (minprice == 1001000)
+					{
+						var shoesList = _shoesDT.GetAllShoesDetails().Where(x => x.Price > minprice && x.Price <= 2700000);
+						combinedShoesList.AddRange(shoesList);
+					}
+					else if (minprice == 2701000)
+					{
+						var shoesList = _shoesDT.GetAllShoesDetails().Where(x => x.Price > minprice && x.Price <= 3999000);
+						combinedShoesList.AddRange(shoesList);
+					}
+					else if (minprice == 4000000)
+					{
+						var shoesList = _shoesDT.GetAllShoesDetails().Where(x => x.Price >= minprice);
+						combinedShoesList.AddRange(shoesList);
+					}
+				}
+			}
+
+			ViewBag.shoesList = combinedShoesList;
+			return View("ListProduct");
+		}
+
 	}
 }
