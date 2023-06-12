@@ -3,6 +3,7 @@ using AppData.IServices;
 using AppData.Models;
 using AppData.Repositories;
 using AppData.Services;
+using AppView.IServices;
 using AppView.Models;
 using AppView.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -22,6 +23,7 @@ namespace AppView.Controllers
         private readonly IShoesDetailsService _shoesDT;
         private readonly IProductService _product;
         private readonly IImageService _image;
+        private readonly IBillService _bill;
         public CartController(ILogger<CartController> logger)
         {
             _logger = logger;
@@ -29,6 +31,7 @@ namespace AppView.Controllers
             _shoesDT = new ShoesDetailsService();
             _product = new ProductService();
             _image = new ImageService();
+            _bill = new BillService();
         }
         public IActionResult Cart()
         {
@@ -115,6 +118,8 @@ namespace AppView.Controllers
                     ShoesDT.SizeID = SizeID;
                     _dBContext.Update(ShoesDT);
                     _dBContext.SaveChanges();
+                    
+
                 }
             }
             else
@@ -286,7 +291,13 @@ namespace AppView.Controllers
             }
             return NotFound();
         }
-    }
+
+		public IActionResult ViewBill()
+        {
+			List<Bill> lstBills = _bill.GetAllBills();
+			return View(lstBills);
+		}
+	}
 }
 //if (!HttpContext.Session.TryGetValue("EmployeeID", out _))
 //{
