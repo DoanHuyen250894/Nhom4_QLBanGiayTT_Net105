@@ -45,7 +45,7 @@ namespace AppAPI.Controllers
 
         // POST api/<ShoesDetailsController>
         [HttpPost("create-shoesdetail")] 
-        public bool CreateShoesDetail(string createdate, decimal price, decimal importprice, int availablequantity, string description, int status, Guid colorid, Guid productid, Guid sizeid, Guid soleid, Guid styleid, Guid supplierid) 
+        public bool CreateShoesDetail(string createdate, decimal price, decimal importprice, int availablequantity, string description, int status, Guid colorid, Guid productid, Guid soleid, Guid styleid, Guid supplierid) 
         {
             ShoesDetails shoesdt = new ShoesDetails(); 
             shoesdt.ShoesDetailsId = Guid.NewGuid();
@@ -56,11 +56,10 @@ namespace AppAPI.Controllers
             shoesdt.Description = description;
             shoesdt.Status = status;
             shoesdt.ColorID = colorid;
-           shoesdt.ProductID = productid;
-            shoesdt.SizeID = sizeid;
+            shoesdt.ProductID = productid;
             shoesdt.SoleID = soleid;
             shoesdt.StyleID = styleid;
-           shoesdt.SupplierID = supplierid;
+            shoesdt.SupplierID = supplierid;
             //shoesdt.Color.Name = namecolor;
            // shoesdt.ColorID = colorrp.GetAll().Where(p => p.Name == colorid).Select(p => p.ColorID).FirstOrDefault();
             //shoesdt.ProductID = productrp.GetAll().Where(p => p.Name == nameproduct).Select(p => p.ProductID).FirstOrDefault();
@@ -73,7 +72,7 @@ namespace AppAPI.Controllers
 
         // PUT api/<ShoesDetailsController>/5
         [HttpPut("edit-shoesdetail")]
-        public bool Put(Guid id, string createdate, decimal price, decimal importprice, int availablequantity, string description, int status, Guid colorid, Guid productid, Guid sizeid, Guid soleid, Guid styleid, Guid supplierid) 
+        public bool Put(Guid id, string createdate, decimal price, decimal importprice, int availablequantity, string description, int status, Guid colorid, Guid productid, Guid soleid, Guid styleid, Guid supplierid) 
         {
             var shoesdt = repos.GetAll().First(p => p.ShoesDetailsId == id);
             shoesdt.CreateDate = DateTime.Parse(createdate);
@@ -84,7 +83,6 @@ namespace AppAPI.Controllers
             shoesdt.Status = status;
             shoesdt.ColorID = colorid;
             shoesdt.ProductID = productid;
-            shoesdt.SizeID = sizeid;
             shoesdt.SoleID = soleid;
             shoesdt.StyleID = styleid;
             shoesdt.SupplierID = supplierid;

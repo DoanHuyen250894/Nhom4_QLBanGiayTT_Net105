@@ -33,7 +33,6 @@ namespace AppView.Controllers
             var shoesdt = JsonConvert.DeserializeObject<List<ShoesDetails>>(apiData);
             return View(shoesdt);
         }
-        [HttpGet]
         public async Task<IActionResult> CreateShoesDetails()
         {
             using(ShopDBContext shopDBContext = new ShopDBContext())
@@ -45,10 +44,6 @@ namespace AppView.Controllers
                 var product = shopDBContext.Products.ToList();
                 SelectList selectListProduct = new SelectList(product, "ProductID", "Name");
                 ViewBag.ProductList = selectListProduct;
-
-                var size = shopDBContext.Sizes.ToList();
-                SelectList selectListSize = new SelectList(size, "SizeID", "Name");
-                ViewBag.SizeList = selectListSize;
 
                 var sole = shopDBContext.Soles.ToList();
                 SelectList selectListSole = new SelectList(sole, "SoleID", "Name");
@@ -69,7 +64,7 @@ namespace AppView.Controllers
         public async Task<IActionResult> CreateShoesDetails(ShoesDetails shoesdt)
         {
             HttpClient httpClient = new HttpClient();
-            string apiUrl = $"https://localhost:7036/api/ShoesDetails/create-shoesdetail?createdate={shoesdt.CreateDate}&price={shoesdt.Price}&importprice={shoesdt.ImportPrice}&availablequantity={shoesdt.AvailableQuantity}&description={shoesdt.Description}&status={shoesdt.Status}&colorid={shoesdt.ColorID}&productid={shoesdt.ProductID}&sizeid={shoesdt.SizeID}&soleid={shoesdt.SoleID}&styleid={shoesdt.StyleID}&supplierid={shoesdt.SupplierID}";
+            string apiUrl = $"https://localhost:7036/api/ShoesDetails/create-shoesdetail?createdate={shoesdt.CreateDate}&price={shoesdt.Price}&importprice={shoesdt.ImportPrice}&availablequantity={shoesdt.AvailableQuantity}&description={shoesdt.Description}&status={shoesdt.Status}&colorid={shoesdt.ColorID}&productid={shoesdt.ProductID}&soleid={shoesdt.SoleID}&styleid={shoesdt.StyleID}&supplierid={shoesdt.SupplierID}";
            
             var response = await httpClient.PostAsync(apiUrl, null);
             
@@ -91,10 +86,6 @@ namespace AppView.Controllers
                 SelectList selectListProduct = new SelectList(product, "ProductID", "Name");
                 ViewBag.ProductList = selectListProduct;
 
-                var size = shopDBContext.Sizes.ToList();
-                SelectList selectListSize = new SelectList(size, "SizeID", "Name");
-                ViewBag.SizeList = selectListSize;
-
                 var sole = shopDBContext.Soles.ToList();
                 SelectList selectListSole = new SelectList(sole, "SoleID", "Name");
                 ViewBag.SoleList = selectListSole;
@@ -112,7 +103,7 @@ namespace AppView.Controllers
         public async Task<IActionResult> UpdateShoesDetails(ShoesDetails shoesdt) // Thực hiện việc Tạo mới
         {
             HttpClient httpClient = new HttpClient();
-            string apiUrl = $"https://localhost:7036/api/ShoesDetails/edit-shoesdetail?id={shoesdt.ShoesDetailsId}&createdate={shoesdt.CreateDate}&price={shoesdt.Price}&importprice={shoesdt.ImportPrice}&availablequantity={shoesdt.AvailableQuantity}&description={shoesdt.Description}&status={shoesdt.Status}&colorid={shoesdt.ColorID}&productid={shoesdt.ProductID}&sizeid={shoesdt.SizeID}&soleid={shoesdt.SoleID}&styleid={shoesdt.StyleID}&supplierid={shoesdt.SupplierID}";
+            string apiUrl = $"https://localhost:7036/api/ShoesDetails/edit-shoesdetail?id={shoesdt.ShoesDetailsId}&createdate={shoesdt.CreateDate}&price={shoesdt.Price}&importprice={shoesdt.ImportPrice}&availablequantity={shoesdt.AvailableQuantity}&description={shoesdt.Description}&status={shoesdt.Status}&colorid={shoesdt.ColorID}&productid={shoesdt.ProductID}&soleid={shoesdt.SoleID}&styleid={shoesdt.StyleID}&supplierid={shoesdt.SupplierID}";
 
            var response = await httpClient.PutAsync(apiUrl, null);
 

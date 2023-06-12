@@ -22,7 +22,7 @@ namespace AppData.Configurations
             builder.Property(c => c.Description).HasColumnType("nvarchar(1000)");
             builder.Property(c => c.Status).HasColumnType("int");
             builder.Property(c => c.ImageUrl).HasColumnType("nvarchar(1000)");
-            builder.HasOne(c => c.Size).WithMany(c => c.ShoesDetails).HasForeignKey(c => c.SizeID);
+            builder.HasOne(c => c.Size).WithMany(c => c.ShoesDetails).HasForeignKey(c => c.SizeID).IsRequired(false);
             builder.HasOne(c => c.Sole).WithMany(c => c.ShoesDetails).HasForeignKey(c => c.SoleID);
             builder.HasOne(c => c.Style).WithMany(c => c.ShoesDetails).HasForeignKey(c => c.StyleID);
             builder.HasOne(c => c.Product).WithMany(c => c.ShoesDetails).HasForeignKey(c => c.ProductID);
