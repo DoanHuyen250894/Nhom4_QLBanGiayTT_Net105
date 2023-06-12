@@ -1,0 +1,110 @@
+﻿@model IEnumerable<AppData.Models.BillDetails>
+
+@{
+    ViewData["Title"] = "BillDetails";
+    var tong = ViewBag.tongtien;
+}
+
+<h1 style="text-align: center">Chi tiết hóa đơn</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Tên sản phẩm
+            </th>
+            <th>
+                Số lượng
+            </th>
+            <th>
+                Giá
+            </th>
+            <th>
+                Size
+            </th>
+         
+            <th>
+               Color
+            </th>
+            <th>
+                Sole
+
+            </th>
+            <th>
+                Style
+            </th>
+            <th>
+                Thành tiền
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @foreach (var shoesDetails in ViewData["Name"] as SelectList)
+                    {
+                        if (shoesDetails.Value == item.ShoesDetailsId.ToString())
+                        {
+                            @shoesDetails.Text
+                        }
+                    }
+                   
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Quantity)
+                </td>
+                <td>
+                  @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @foreach (var shoesDetails in ViewData["Size"] as SelectList)
+                    {
+                        if (shoesDetails.Value == item.ShoesDetailsId.ToString())
+                        {
+                            @shoesDetails.Text
+                        }
+                    }
+                   
+                </td>
+                <td>
+                    @foreach (var shoesDetails in ViewData["Color"] as SelectList)
+                    {
+                        if (shoesDetails.Value == item.ShoesDetailsId.ToString())
+                        {
+                            @shoesDetails.Text
+                        }
+                    }
+
+                </td>
+                <td>
+                    @foreach (var shoesDetails in ViewData["Sole"] as SelectList)
+                    {
+                        if (shoesDetails.Value == item.ShoesDetailsId.ToString())
+                        {
+                            @shoesDetails.Text
+                        }
+                    }
+
+                </td>
+                   <td>
+                    @foreach (var shoesDetails in ViewData["Style"] as SelectList)
+                    {
+                        if (shoesDetails.Value == item.ShoesDetailsId.ToString())
+                        {
+                            @shoesDetails.Text
+                        }
+                    }
+                   
+                </td>
+                
+                <td>
+                    @((item.Price * item.Quantity)) 
+                   
+                </td>
+            </tr>
+        }
+
+    </tbody>
+    <h4>Tổng tiền : @tong </h4>
+</table>
