@@ -1,6 +1,12 @@
 ﻿@model List<CartItemViewModel>
 @{
     ViewData["Title"] = "Giỏ hàng";
+    // Tính toán tổng giá tiền
+    decimal totalPrice = 0;
+    foreach (var item in Model)
+    {
+        totalPrice += item.Price * item.Quantity;
+    }
 }
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <link rel="stylesheet" href="~/css/giohang.css">
@@ -68,6 +74,59 @@
                                         </p>
                                         <!-- Total Price -->
                                     </div>
+                                    <script>
+                                        function incrementQuantity(button) {
+                                            var id = button.getAttribute('data-id');
+                                            var price = button.getAttribute('data-price');
+
+                                            // Gửi yêu cầu AJAX để cập nhật số lượng tăng lên server
+                                            $.ajax({
+                                                url: '/Cart/IncrementQuantity',
+                                                type: 'POST',
+                                                data: { id: id },
+                                                success: function () {
+                                                    // Cập nhật số lượng trong giao diện
+                                                    var quantityInput = button.parentNode.querySelector('.quantity');
+                                                    var quantity = parseInt(quantityInput.value);
+                                                    quantity++;
+                                                    quantityInput.value = quantity;
+
+                                                    // Cập nhật tổng giá tiền trong giao diện
+                                                    var totalSpan = button.parentNode.parentNode.querySelector('.total-price');
+                                                    var totalPrice = parseInt(totalSpan.innerText.replace(/[^0-9]/g, ''));
+                                                    totalPrice += parseInt(price);
+                                                    totalSpan.innerText = totalPrice.toLocaleString('en-US');
+                                                }
+                                            });
+                                        }
+
+                                        function decrementQuantity(button) {
+                                            var id = button.getAttribute('data-id');
+                                            var price = button.getAttribute('data-price');
+
+                                            // Gửi yêu cầu AJAX để cập nhật số lượng giảm xuống server
+                                            $.ajax({
+                                                url: '/Cart/DecrementQuantity',
+                                                type: 'POST',
+                                                data: { id: id },
+                                                success: function () {
+                                                    // Cập nhật số lượng trong giao diện
+                                                    var quantityInput = button.parentNode.querySelector('.quantity');
+                                                    var quantity = parseInt(quantityInput.value);
+                                                    if (quantity > 1) {
+                                                        quantity--;
+                                                        quantityInput.value = quantity;
+
+                                                        // Cập nhật tổng giá tiền trong giao diện
+                                                        var totalSpan = button.parentNode.parentNode.querySelector('.total-price');
+                                                        var totalPrice = parseInt(totalSpan.innerText.replace(/[^0-9]/g, ''));
+                                                        totalPrice -= parseInt(price);
+                                                        totalSpan.innerText = totalPrice.toLocaleString('en-US');
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    </script>
                                     <script>
                                         // Tìm các thẻ input số lượng và cập nhật lại giá tiền
                                         function updateTotalPrice(input) {
@@ -151,7 +210,7 @@
                                 <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
                                     Subtotal
                                     <div id="cart-total-container">
-                                        <span class="cart-total-sub"></span>
+                                        <span class="cart-total-sub">@totalPrice.ToString("N0")đ</span>
                                     </div>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between align-items-center px-0">
@@ -163,64 +222,36 @@
                                         <strong>Total</strong>
                                     </div>
                                     <div id="cart-total-container">
-                                        <span name="TongTien" class="cart-total-all" style="font-weight:bold;"></span>
+                                        <span name="TongTien" class="cart-total-all" style="font-weight:bold;">@totalPrice.ToString("N0")đ</span>
                                     </div>
                                 </li>
                             </ul>
                             <hr />
-                            <form method="post" action="@Url.Action("CheckoutOk", "CartDetail")" id="checkout-form">
+                            <h5>Thông Tin Thanh Toán</h5>
+                            <form method="post" action="@Url.Action("CheckoutOk", "Cart")" id="checkout-form" style="margin-top:15px;">
                                 <div class="form-group">
                                     <input type="hidden" id="total-price" name="TongTien" value="">
                                 </div>
                                 <div class="form-group">
-                                    <label for="MaHD">Mã HD:</label>
-                                    <strong id="MaHD" name="MaHD">@Model.FirstOrDefault()?.MaHD</strong>
-                                </div>
-                                <div class="form-group">
-                                    <label for="name">Name:</label>
-                                    <input type="text" class="form-control" id="name" name="HoTen" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="phone">Phone number:</label>
-                                    <input type="tel" class="form-control" id="phone" name="SoDienThoai" required>
-                                </div>
-                                <div class="form-group">
-@*                                    <label for="email">Email:</label>*@
-                                    <input style="display:none;" type="email" class="form-control" id="email" name="Email">
-                                </div>
-                                <div class="form-group">
-@*                                    <label for="Password" style="he">Password:</label>*@
-                                    <input style="display:none;" type="password" class="form-control" id="password" name="Password">
-                                </div>
-                                <div class="form-group">
-                                    <label for="address">Address:</label>
-                                    <input type="text" class="form-control" id="address" name="DiaChi" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="date">Date of purchase:</label>
-                                    <input type="date" class="form-control" id="date" name="date" required>
-                                </div>
-                                <div class="form-group">
-                                    <input type="radio" id="paid" name="TrangThaiThanhToan" value="1">
-                                    <label for="paid">Đã thanh toán</label>
+                                    <input type="radio" id="paid" name="TrangThaiThanhToan" value="1" checked>
+                                    <label for="paid">Mua hàng tại quầy</label>
                                     <br />
-                                    <input type="radio" id="not-paid" name="TrangThaiThanhToan" value="0" checked>
-                                    <label for="not-paid">Chưa thanh toán</label>
+                                    <input type="radio" id="not-paid" name="TrangThaiThanhToan" value="0" disabled>
+                                    <label for="not-paid">Giao hàng</label>
+                                </div>
+                                <div class="form-group" style="margin-top:10px;">
+                                    <label for="date">Ngày tạo đơn hàng:</label>
+                                    <input type="date" class="form-control" id="date" name="date" required>
                                 </div>
                                 <button class="btn1 btn-danger text mr-2 px-4" type="submit"
                                         style="width: 355px; height: 45px; border-radius: 25px; color: white; background-color: black; margin-top:15px;">
-                                    Member Checkout
+                                    Xác Nhận Đặt Hàng
                                 </button>
                             </form>
                         </div>
                     </div>
                 </div>
             </div>
-            <script>
-                var totalPriceSpan = document.querySelector('.cart-total-all');
-                var totalPriceInput = document.querySelector('#total-price');
-                totalPriceInput.value = totalPriceSpan.innerText.trim();
-            </script>
             <script>
                 $("#btn1").click(function () {
                     var maHD = $("#MaHD").html(); // lấy giá trị của thẻ strong có id là MaHD

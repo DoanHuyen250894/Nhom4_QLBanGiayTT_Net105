@@ -9,7 +9,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
+using System.Security.Claims;
 
 namespace AppView.Controllers
 {
@@ -173,6 +175,116 @@ namespace AppView.Controllers
                 // Chuyển hướng trở lại trang giỏ hàng
             }
             return RedirectToAction("Cart");
+        }
+        private string GenerateBillCode()
+        {
+            // Tạo mã đơn hàng dựa trên số lượng đơn hàng đã có trong cơ sở dữ liệu
+            var count = _dBContext.Bills.Count();
+            var billCode = $"HD{count + 1:000}";
+            return billCode;
+        }
+        [HttpPost]
+        public IActionResult CheckoutOk(List<CartItemViewModel> viewModel)
+        {
+            var userIdString = HttpContext.Session.GetString("UserId");
+            var CustomerID = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
+            if (CustomerID == Guid.Empty)
+            {
+                return RedirectToAction("Login", "Customer");
+            }
+
+            // Thêm sản phẩm vào bảng BillDetail và cập nhật số lượng sản phẩm
+            var cartItems = _dBContext.CartDetails
+                .Where(c => c.CumstomerID == CustomerID)
+                .Include(c => c.ShoesDetails)
+                .ToList();
+            // Tính tổng giá tiền cho cả hóa đơn
+            decimal totalPrice = 0;
+            foreach (var item in cartItems)
+            {
+                totalPrice += item.ShoesDetails.Price * item.Quantity;
+            }
+            // Tạo đơn hàng
+            var bill = new Bill
+            {
+                BillID = Guid.NewGuid(),
+                BillCode = GenerateBillCode(), // Tạo mã đơn hàng (ví dụ: HD001, HD002, ...)
+                CustomerID = CustomerID,
+                CreateDate = DateTime.Now,
+                Status = 1,
+                Note = "",
+                SuccessDate = DateTime.Now,
+                ShippingCosts = 0,
+                DeliveryDate = DateTime.Now,
+                CancelDate = DateTime.Now,
+                TotalPrice = totalPrice,
+                EmployeeID = Guid.Parse("899cd5fb-6a25-46ea-4507-08db5d8dd88e"),
+                CouponID = Guid.Parse("db9a5ee0-9a90-47b8-95c2-925b65f44087"),
+                VoucherID = Guid.Parse("c5c7648b-2bee-42c4-b0e3-a0a62e86988f")
+            };
+            _dBContext.Bills.Add(bill);
+
+            foreach (var item in cartItems)
+            {
+                var billDetail = new BillDetails
+                {
+                    ID = Guid.NewGuid(),
+                    BillID = bill.BillID,
+                    ShoesDetailsId = item.ShoesDetailsId,
+                    Quantity = item.Quantity,
+                    Price = item.ShoesDetails.Price * item.Quantity
+                };
+                _dBContext.BillDetails.Add(billDetail);
+
+                // Cập nhật số lượng sản phẩm
+                item.ShoesDetails.AvailableQuantity -= item.Quantity;
+                _dBContext.ShoesDetails.Update(item.ShoesDetails);
+            }
+
+            // Lưu thay đổi vào cơ sở dữ liệu
+            _dBContext.SaveChanges();
+
+            // Xóa giỏ hàng của người dùng
+            _dBContext.CartDetails.RemoveRange(cartItems);
+            _dBContext.SaveChanges();
+
+            // Chuyển hướng sang trang cảm ơn
+            return Content("Thanh toán thành công");
+        }
+        [HttpPost]
+        public IActionResult IncrementQuantity(Guid id)
+        {
+            var cartItem = _dBContext.CartDetails.FirstOrDefault(c => c.ShoesDetailsId == id);
+            if (cartItem != null)
+            {
+                cartItem.Quantity++;
+                _dBContext.SaveChanges();
+
+                // Ghi log hoặc in thông tin ra màn hình
+                Console.WriteLine("IncrementQuantity is called successfully."); // Sử dụng Console.WriteLine
+
+                // Trả về kết quả thành công
+                return Ok();
+            }
+            return NotFound();
+        }
+
+        [HttpPost]
+        public IActionResult DecrementQuantity(Guid id)
+        {
+            var cartItem = _dBContext.CartDetails.FirstOrDefault(c => c.ShoesDetailsId == id);
+            if (cartItem != null && cartItem.Quantity > 1)
+            {
+                cartItem.Quantity--;
+                _dBContext.SaveChanges();
+
+                // Ghi log hoặc in thông tin ra màn hình
+                Console.WriteLine("DecrementQuantity is called successfully."); // Sử dụng Console.WriteLine
+
+                // Trả về kết quả thành công
+                return Ok();
+            }
+            return NotFound();
         }
     }
 }

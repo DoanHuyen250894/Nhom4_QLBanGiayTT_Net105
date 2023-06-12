@@ -1,7 +1,7 @@
 ﻿﻿
 @inject IHttpContextAccessor HttpContextAccessor
 @{
-	var userName = HttpContextAccessor.HttpContext.Session.GetString("FullName");
+	var userName = HttpContextAccessor.HttpContext.Session.GetString("UserName");
 	string role = HttpContextAccessor.HttpContext.Session.GetString("role");
 }
 
@@ -25,7 +25,7 @@
 </head>
 <body>
 	<header>
-		@if (HttpContextAccessor.HttpContext.Session.GetString("FullName") != null)
+		@if (HttpContextAccessor.HttpContext.Session.GetString("UserName") != null)
 		{
 			<div class="container-fluid">
 				<nav style="background: white; height: 40px;" class="relative select-none bg-grey lg:flex lg:items-stretch w-full">
@@ -61,12 +61,12 @@
 						<div style="padding-right: 10px;" class="lg:flex lg:items-stretch lg:justify-end ml-auto">
 							<a style="font-size: 11px; font-weight: bold;" href="#gioithieu"
 						   class="flex-no-grow flex-no-shrink relative py-2 px-4 leading-normal text-dark no-underline flex items-center">Introduce</a>
-							<a style="font-size: 11px; font-weight: bold;" asp-controller="Employee" asp-action="SignUp"
+							<a style="font-size: 11px; font-weight: bold;" asp-controller="Customer" asp-action="SignUp"
 						   class="flex-no-grow flex-no-shrink relative py-2 px-4 leading-normal text-dark no-underline flex items-center">
 								Join
 								Us
 							</a>
-							<a style="font-size: 11px; font-weight: bold;" asp-controller="Employee" asp-action="Login"
+							<a style="font-size: 11px; font-weight: bold;" asp-controller="Customer" asp-action="Login"
 						   class="flex-no-grow flex-no-shrink relative py-2 px-4 leading-normal text-dark no-underline flex items-center">
 								Sign
 								In
