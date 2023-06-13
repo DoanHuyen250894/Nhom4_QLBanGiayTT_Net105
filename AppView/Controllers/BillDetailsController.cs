@@ -53,8 +53,10 @@ namespace AppView.Controllers
 			ViewData["Color"] = new SelectList(shoesDetails, "ShoesDetailsId", "ColorID");
 			ViewData["Sole"] = new SelectList(shoesDetails, "ShoesDetailsId", "SoleID");
 			ViewData["Style"] = new SelectList(shoesDetails, "ShoesDetailsId", "StyleID");
-			
-			var a = billService.GetBillDetailsByID(ID);
+            ViewData["Price"] = new SelectList(shoesDetails, "ShoesDetailsId", "Price");
+           
+            ViewData["CancelDate"] = new SelectList(shoesDetails, "ShoesDetailsId", "CancelDate");
+            var a = billService.GetBillDetailsByID(ID);
 			List<BillDetails> list = new(billService.GetAllBillDetails().Where(c => c.BillID == ID));
 		
 
