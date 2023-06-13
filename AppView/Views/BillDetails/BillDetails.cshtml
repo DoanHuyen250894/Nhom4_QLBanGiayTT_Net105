@@ -5,15 +5,15 @@
     var tong = ViewBag.tongtien;
 }
 
-<div class="card">
-    <div class="card-body">
+<div class="card" >
+    <div class="card-body col-lg-8" style="margin-left: 250px">
         <div class="container mb-5 mt-3">
            
 
             <div class="container">
                 <div class="col-md-12">
                     <div class="text-center">
-                        <i class="fab fa-2x ms-0" style="color:#5d9fc5 ;">Thank for your purchase</i>
+                        <i class="fab fa-2x ms-0" style="color:black ;">Thank for your purchase</i>
                       
                     </div>
 
@@ -21,7 +21,7 @@
                 <div class="row">
                     <div class="col-xl-8">
                         <ul class="list-unstyled">
-                          <li class="text-muted">To: <span style="color:#5d9fc5 ;">John Lorem</span></li>
+                          <li class="text-muted">To: <span style="color:black ;">John Lorem</span></li>
                             <li class="text-muted">Street, City</li>
                             <li class="text-muted">State, Country</li>
                             <li class="text-muted"><i class="fas fa-phone"></i> 123-456-789</li>
@@ -79,7 +79,7 @@
                 }*@
                 <div class="row my-2 mx-1 justify-content-center">
                     <table class="table table-striped table-borderless">
-                        <thead style="background-color:#84B0CA ;" class="text-white">
+                        <thead style="background-color:black ;" class="text-white">
                             <tr>
                                 <th scope="col">#</th>
                                 <th scope="col">Description</th>
@@ -137,14 +137,14 @@
                 </div>
                 <div class="row">
                     <div class="col-xl-8">
-                        <p class="ms-3">Add additional notes and payment information</p>
+                       @* <p class="ms-3">Add additional notes and payment information</p>*@
 
                     </div>
                     <div class="col-xl-3">
-                        <ul class="list-unstyled">
+                      @*  <ul class="list-unstyled">
                             <li class="text-muted ms-3"><span class="text-black me-4">SubTotal</span>$0</li>
                             <li class="text-muted ms-3 mt-2"><span class="text-black me-4">Tax(15%)</span>$0</li>
-                        </ul>
+                        </ul>*@
                         <p class="text-black float-start">
                                 <span class="text-black me-3"> Total Amount</span><span style="font-size: 25px;"> @tong</span>
                         </p>
@@ -158,7 +158,7 @@
                     </div>
                     <div class="col-xl-2">
                         <button type="button" class="btn btn-primary text-capitalize"
-                                style="background-color:#60bdf3 ;">
+                                style="background-color:black ;">
                             Pay Now
                         </button>
                     </div>
