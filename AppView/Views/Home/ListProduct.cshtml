@@ -31,10 +31,10 @@
 		<div class="border-bottom pb-2 ml-2">
 			<h4 id="burgundy">Bộ lọc</h4>
 		</div>
-		<div class="py-2 border-bottom ml-3" style="margin-top: 25px;">
-			<h6 class="font-weight-bold">Giới tính</h6>
-			<div id="orange"><span class="fa fa-minus"></span></div>
-			<form asp-controller="Home" asp-action="SexFilter" method="post" style="padding-top: 10px;">
+		<form asp-controller="Home" asp-action="Filters" method="post">
+			<div class="py-2 border-bottom ml-3" style="margin-top: 25px;">
+				<h6 class="font-weight-bold">Giới tính</h6>
+				<div id="orange"><span class="fa fa-minus"></span></div>
 				<div class="form-group">
 					<input type="checkbox" name="genders" id="male" value="male">
 					<label for="male" id="male">Nam</label>
@@ -47,40 +47,12 @@
 					<input type="checkbox" name="genders" id="unisex" value="unisex">
 					<label for="unisex" id="unisex">Unisex</label>
 				</div>
-				<div class="form-group">
-					<button type="submit">Submit</button>
-				</div>
-				
-			</form>
-		</div>
-
-		
-
-		<div class="py-2 border-bottom ml-3" style="margin-top: 25px;">
-			<h6 class="font-weight-bold">Cỡ giày</h6>
-			<div id="orange"><span class="fa fa-minus"></span></div>
-			<form asp-controller="Home" asp-action="SizeFilter" method="post" style="padding-top: 10px;">
-				@for (int size = 35; size <= 49; size++)
-				{
-					<div class="form-group">
-						<input type="checkbox" id="size@(size)" name="sizes" value="@(size)">
-						<label for="size@(size)" id="size@(size)">@size</label>
-					</div>
-				}
-				<div class="form-group">
-					<button type="submit">Submit</button>
-				</div>
-			</form>
-		</div>
+			</div>
 
 
-
-
-		
-		<div class="py-2 ml-3 bottom ml-3" style="margin-top: 25px;">
-			<h6 class="font-weight-bold">Khoảng giá</h6>
-			<div id="orange"><span class="fa fa-minus"></span></div>
-			<form asp-controller="Home" asp-action="PriceFilter" method="post" style="padding-top: 10px;">
+			<div class="py-2 ml-3 bottom ml-3" style="margin-top: 25px;">
+				<h6 class="font-weight-bold">Khoảng giá</h6>
+				<div id="orange"><span class="fa fa-minus"></span></div>
 				<div class="form-group">
 					<input type="checkbox" id="price1" name="minPrice" value="0">
 					<label for="price1">Dưới 1.000.000đ</label>
@@ -97,18 +69,13 @@
 					<input type="checkbox" id="price4" name="minPrice" value="4000000">
 					<label for="price4">Trên 4.000.000đ</label>
 				</div>
-				<div class="form-group">
-					<button type="submit">Submit</button>
-				</div>
-			</form>
-		</div>
+			</div>
 
 
-		<hr>
-		<div class="py-2 ml-3 bottom ml-3" style="margin-top: 25px;">
-			<h6 class="font-weight-bold">Thương hiệu</h6>
-			<div id="orange"><span class="fa fa-minus"></span></div>
-			<form asp-controller="Home" asp-action="SupplierFilter" style="padding-top: 10px;">
+			<hr>
+			<div class="py-2 ml-3 bottom ml-3" style="margin-top: 25px;">
+				<h6 class="font-weight-bold">Thương hiệu</h6>
+				<div id="orange"><span class="fa fa-minus"></span></div>
 				<div class="form-group">
 					<input type="checkbox" name="brands" id="nike" value="nike">
 					<label for="nike">Nike</label>
@@ -141,16 +108,11 @@
 					<input type="checkbox" name="brands" id="puma" value="puma">
 					<label for="puma">Puma</label>
 				</div>
-				<div class="form-group">
-					<button type="submit">Submit</button>
-				</div>
-			</form>
-		</div>
-		<hr>
-		<div class="py-2 ml-3 bottom ml-3" style="margin-top: 25px;">
-			<h6 class="font-weight-bold">Phong cách</h6>
-			<div id="orange"><span class="fa fa-minus"></span></div>
-			<form asp-controller="Home" asp-action="StyleFilter" id="filter-form" style="padding-top: 10px;">
+			</div>
+			<hr>
+			<div class="py-2 ml-3 bottom ml-3" style="margin-top: 25px;">
+				<h6 class="font-weight-bold">Phong cách</h6>
+				<div id="orange"><span class="fa fa-minus"></span></div>
 				<div class="form-group">
 					<input type="checkbox" id="name1" name="styles" value="walking">
 					<label for="name1">Walking</label>
@@ -175,18 +137,13 @@
 					<input type="checkbox" id="name6" name="styles" value="athletic">
 					<label for="name9">Athletic</label>
 				</div>
-				<div class="form-group">
-					<button type="submit">Submit</button>
-				</div>
-			</form>
-		</div>
-		<hr>
-		<div class="py-2 ml-3 bottom ml-3" style="margin-top: 25px;">
-			<h6 class="font-weight-bold">Màu sắc</h6>
-			<div id="orange">
-				<span class="fa fa-minus"></span>
 			</div>
-			<form asp-controller="Home" asp-action="ColorFilter" method="post" style="padding-top: 10px;">
+			<hr>
+			<div class="py-2 ml-3 bottom ml-3" style="margin-top: 25px;">
+				<h6 class="font-weight-bold">Màu sắc</h6>
+				<div id="orange">
+					<span class="fa fa-minus"></span>
+				</div>
 				<div class="" style="float: left;">
 					<button type="button" id="redBtn" name="colors" value="red" class="color-button color-red" style="background-color: rgb(205, 9, 9); width: 25px; height: 25px; border-radius: 50%; border: none;"></button>
 					<p style="font-size: 11px; padding-left: 5px;">Đỏ</p>
@@ -229,10 +186,12 @@
 					<input type="checkbox" id="brownChk" name="colors" value="brown" />
 				</div>
 				<div class="form-group" style="float: right; padding-right: 9px; padding-top: 15px">
-					<button type="submit">Submit</button>
+					<button type="submit">Tìm kiếm</button>
 				</div>
-			</form>
-		</div>
+			</div>
+		</form>
+
+		
 
 
 	</section>
