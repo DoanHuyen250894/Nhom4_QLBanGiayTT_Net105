@@ -27,152 +27,67 @@
                     <div class="card-body">
                         <!-- Single item -->
                         <div class="row">
-                            @foreach (var item in Model)
-                            { 
-                                <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
-                                    <!-- Image -->
-                                    <div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
-                                        <img src="@Url.Content("~/image/" + item.ProductImage)" class="w-100" alt="Blue Jeans Jacket" />
-                                        <a href="#!">
-                                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.2)"></div>
-                                        </a>
-                                    </div>
-                                    <!-- Image -->
-                                </div>
+                             @foreach (var item in Model)
+                             {
+                                 <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
+                                     <!-- Image -->
+                                     <div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
+                                         <img src="@Url.Content("~/image/" + item.ProductImage)" class="w-100" alt="Blue Jeans Jacket" />
+                                         <a href="#!">
+                                             <div class="mask" style="background-color: rgba(251, 251, 251, 0.2)"></div>
+                                         </a>
+                                     </div>
+                                     <!-- Image -->
+                                 </div>
+                                 <div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
+                                     <!-- Data -->
+                                     <p><strong>@item.ProductName</strong></p>
+                                     <p>@item.Description</p>
+                                     <p>Size @item.Size</p>
+                                     <form id="removeCartItemForm_@item.ShoesDetailsID" method="post" action="@Url.Action("RemoveCartItem", "Cart")">
+                                         <input type="hidden" name="id" value="@item.ShoesDetailsID" />
+                                     </form>
+                                     <!-- Button to remove cart item -->
+                                     <button type="button" class="btn btn-primary btn-sm me-1 mb-2" data-mdb-toggle="tooltip"
+                                     title="Remove item"
+                                     onclick="document.getElementById('removeCartItemForm_@item.ShoesDetailsID').submit();">
+                                         <i class="fas fa-trash"></i>
+                                     </button>
 
-                                <div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
-                                    <!-- Data -->
-                                    <p><strong>@item.ProductName</strong></p>
-                                    <p>@item.Description</p>
-                                    <p>Size @item.Size</p>
-                                    <form id="removeCartItemForm_@item.ShoesDetailsID" method="post" action="@Url.Action("RemoveCartItem", "Cart")">
-                                        <input type="hidden" name="id" value="@item.ShoesDetailsID" />
-                                    </form>
-                                    <!-- Button to remove cart item -->
-                                    <button type="button" class="btn btn-primary btn-sm me-1 mb-2" data-mdb-toggle="tooltip"
-                                    title="Remove item"
-                                    onclick="document.getElementById('removeCartItemForm_@item.ShoesDetailsID').submit();">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                                    <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
-                                        <!-- Quantity -->
-                                        <div class="d-flex mb-4" style="max-width: 300px">
-                                            <button style="height: 37px; border-radius: 4px;" class="btn btn-primary px-3 me-2" onclick="decrementQuantity(this)" data-id="@item.ShoesDetailsID" data-price="@item.Price">
-                                                <i class="fas fa-minus"></i>
-                                            </button>
-                                            <div class="form-outline">
-                                                <input id="quantity" min="1" max="99" name="quantity" value="@item.Quantity" type="number" class="form-control quantity" data-price="@item.Price" data-id="@item.ShoesDetailsID" onchange="calculateTotalPrice(@item.Quantity)" />
-                                            </div>
-                                            <button style="height: 37px; border-radius: 4px;" class="btn btn-primary px-3 ms-2" onclick="incrementQuantity(this)" data-id="@item.ShoesDetailsID" data-price="@item.Price">
-                                                <i class="fas fa-plus"></i>
-                                            </button>
-                                        </div>
-                                        <!-- Total Price -->
-                                        <p class="text-start text-md-center">
-                                            <span class="total-price ms-auto">@item.Price.ToString("N0")</span>
-                                        </p>
-                                        <!-- Total Price -->
-                                    </div>
-                                    <script>
-                                        function incrementQuantity(button) {
-                                            var id = button.getAttribute('data-id');
-                                            var price = button.getAttribute('data-price');
-
-                                            // Gửi yêu cầu AJAX để cập nhật số lượng tăng lên server
+                                 </div>
+                                 <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                                     <!-- Quantity -->
+                                     <div class="d-flex mb-4" style="max-width: 300px;">
+                                         <div class="form-outline" style="margin-left:72px;">
+                                                <input id="quantity_@item.ShoesDetailsID" min="1" max="10" name="quantity" value="@item.Quantity" type="number" class="form-control quantity" onchange="updateCartItemQuantity('@item.ShoesDetailsID', this.value)" />
+                                         </div>
+                                     </div>
+                                     <!-- Total Price -->
+                                     <p class="text-start text-md-center">
+                                          @{
+                                              var priceItems = item.Price * item.Quantity;
+                                              <span class="total-price ms-auto">@priceItems.ToString("N0")đ</span>
+                                          }
+                                     </p>
+                                     <!-- Total Price -->
+                                 </div>
+                                 <hr class="my-4" />
+                                 <script>
+                                        function updateCartItemQuantity(shoesDetailsId, quantity) {
                                             $.ajax({
-                                                url: '/Cart/IncrementQuantity',
+                                                url: '@Url.Action("UpdateCartItemQuantity", "Cart")',
                                                 type: 'POST',
-                                                data: { id: id },
-                                                success: function () {
-                                                    // Cập nhật số lượng trong giao diện
-                                                    var quantityInput = button.parentNode.querySelector('.quantity');
-                                                    var quantity = parseInt(quantityInput.value);
-                                                    quantity++;
-                                                    quantityInput.value = quantity;
-
-                                                    // Cập nhật tổng giá tiền trong giao diện
-                                                    var totalSpan = button.parentNode.parentNode.querySelector('.total-price');
-                                                    var totalPrice = parseInt(totalSpan.innerText.replace(/[^0-9]/g, ''));
-                                                    totalPrice += parseInt(price);
-                                                    totalSpan.innerText = totalPrice.toLocaleString('en-US');
+                                                data: { shoesDetailsId: shoesDetailsId, quantity: quantity },
+                                                success: function (response) {
+                                                    // Cập nhật số lượng thành công
+                                                },
+                                                error: function (xhr, textStatus, errorThrown) {
+                                                    // Xử lý lỗi (nếu có)
                                                 }
                                             });
                                         }
-
-                                        function decrementQuantity(button) {
-                                            var id = button.getAttribute('data-id');
-                                            var price = button.getAttribute('data-price');
-
-                                            // Gửi yêu cầu AJAX để cập nhật số lượng giảm xuống server
-                                            $.ajax({
-                                                url: '/Cart/DecrementQuantity',
-                                                type: 'POST',
-                                                data: { id: id },
-                                                success: function () {
-                                                    // Cập nhật số lượng trong giao diện
-                                                    var quantityInput = button.parentNode.querySelector('.quantity');
-                                                    var quantity = parseInt(quantityInput.value);
-                                                    if (quantity > 1) {
-                                                        quantity--;
-                                                        quantityInput.value = quantity;
-
-                                                        // Cập nhật tổng giá tiền trong giao diện
-                                                        var totalSpan = button.parentNode.parentNode.querySelector('.total-price');
-                                                        var totalPrice = parseInt(totalSpan.innerText.replace(/[^0-9]/g, ''));
-                                                        totalPrice -= parseInt(price);
-                                                        totalSpan.innerText = totalPrice.toLocaleString('en-US');
-                                                    }
-                                                }
-                                            });
-                                        }
-                                    </script>
-                                    <script>
-                                        // Tìm các thẻ input số lượng và cập nhật lại giá tiền
-                                        function updateTotalPrice(input) {
-                                            var quantity = input.value;
-                                            var price = input.getAttribute("data-price");
-                                            var totalPrice = quantity * price;
-                                            var priceElement = input.closest('.col-lg-4').querySelector(".total-price");
-                                            priceElement.innerHTML = totalPrice.toLocaleString("vi-VN", { style: "currency", currency: "VND" });
-
-                                            // Lưu giá tiền vào sessionStorage
-                                            var id = input.getAttribute("data-id");
-                                            sessionStorage.setItem("price_" + id, totalPrice);
-
-                                            // Lưu số lượng vào sessionStorage
-                                            sessionStorage.setItem("quantity_" + id, quantity);
-                                            var totalPriceElement1 = document.querySelector(".cart-total-sub");
-                                            var totalPriceElement2 = document.querySelector(".cart-total-all");
-                                            var inputs = document.querySelectorAll('input[type="number"]');
-                                            var totalPrice = 0;
-                                            for (var i = 0; i < inputs.length; i++) {
-                                                var price = inputs[i].getAttribute("data-price");
-                                                var quantity = inputs[i].value;
-                                                var itemPrice = price * quantity;
-                                                totalPrice += itemPrice;
-                                            }
-                                            // Cập nhật giá trị của phần tử hiển thị tổng giá tiền
-                                            totalPriceElement1.innerHTML = totalPrice.toLocaleString("vi-VN", { style: "currency", currency: "VND" });
-                                            totalPriceElement2.innerHTML = totalPrice.toLocaleString("vi-VN", { style: "currency", currency: "VND" });
-                                        }
-                                        // Tăng giá trị số lượng và cập nhật giá tiền
-                                        function incrementQuantity(button) {
-                                            var input = button.parentNode.querySelector('input.quantity');
-                                            input.stepUp();
-                                            updateTotalPrice(input);
-
-                                        }
-
-                                        // Giảm giá trị số lượng và cập nhật giá tiền
-                                        function decrementQuantity(button) {
-                                            var input = button.parentNode.querySelector('input.quantity');
-                                            input.stepDown();
-                                            updateTotalPrice(input);
-                                        }
-                                    </script>
-                                <hr class="my-4" />
-                            }
+                                  </script>
+                             }
                         </div>
                         <!-- Single item -->
                    </div>
@@ -252,13 +167,6 @@
                     </div>
                 </div>
             </div>
-            <script>
-                $("#btn1").click(function () {
-                    var maHD = $("#MaHD").html(); // lấy giá trị của thẻ strong có id là MaHD
-                    $('input[name="MaHD"]').val(maHD); // gán giá trị của MaHD cho phần tử đầu vào có name là MaHD
-                });
-
-            </script>
             <script>
                 $(document).ready(function () {
                     // Lấy ngày hiện tại
