@@ -6,6 +6,7 @@ using AppView.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.VisualBasic;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Packaging;
 using System.Diagnostics;
 using ErrorViewModel = AppView.Models.ErrorViewModel;
 
@@ -47,21 +48,26 @@ namespace AppView.Controllers
 		public IActionResult ListProduct()
 		{
 			var shoesList = _shoesDT.GetAllShoesDetails();
+
+			ViewBag.NameSP = ""; // Initialize the ViewBag.NameSP with an empty string before the loop
+			Dictionary<Guid, string> productNames = new Dictionary<Guid, string>();
 			foreach (var shoes in shoesList)
 			{
-				//kiểm tra trong db có thg image nào đã chứa thằng ShoesDetails tương ứng chưa, nếu tồn tại rồi gán cho thuộc tính imageUrl giá trị của link ảnh đó
 				var firstImage = _image.GetAllImages().FirstOrDefault(c => c.ShoesDetailsID == shoes.ShoesDetailsId);
 				if (firstImage != null)
 				{
 					shoes.ImageUrl = firstImage.Image1;
 				}
-				var nameProduct = _product.GetAllProducts().FirstOrDefault(c => c.ProductID == shoes.ProductID);
-				if (nameProduct != null)
+
+				var product = _product.GetAllProducts().FirstOrDefault(c => c.ProductID == shoes.ProductID);
+				if (product != null)
 				{
-					ViewBag.NameSP = nameProduct.Name;
+					productNames[shoes.ShoesDetailsId] = product.Name;
 				}
 			}
+			ViewBag.NameSP = productNames;
 			ViewBag.shoesList = shoesList;
+			
 			return View();
 		}
 
@@ -104,22 +110,23 @@ namespace AppView.Controllers
 				var combinedShoesList = new List<ShoesDetails>();
 				var comparingShoesList = _shoesDT.GetAllShoesDetails();
 
+				ViewBag.NameSP = ""; // Initialize the ViewBag.NameSP with an empty string before the loop
+				Dictionary<Guid, string> productNames = new Dictionary<Guid, string>();
 				foreach (var shoes in comparingShoesList)
 				{
-					// Check if the ShoesDetails has an associated image in the database
 					var firstImage = _image.GetAllImages().FirstOrDefault(c => c.ShoesDetailsID == shoes.ShoesDetailsId);
 					if (firstImage != null)
 					{
 						shoes.ImageUrl = firstImage.Image1;
 					}
 
-					// Check if the ShoesDetails has an associated product in the database
-					var nameProduct = _product.GetAllProducts().FirstOrDefault(c => c.ProductID == shoes.ProductID);
-					if (nameProduct != null)
+					var product = _product.GetAllProducts().FirstOrDefault(c => c.ProductID == shoes.ProductID);
+					if (product != null)
 					{
-						ViewBag.NameSP = nameProduct.Name;
+						productNames[shoes.ShoesDetailsId] = product.Name;
 					}
 				}
+				ViewBag.NameSP = productNames;
 
 				// Filter giới tính
 				if (genders.Contains("male"))
