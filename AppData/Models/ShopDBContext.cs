@@ -29,6 +29,7 @@ namespace AppData.Models
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Image> Images { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<PurchaseMethod> PurchaseMethods { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<ShoesDetails> ShoesDetails { get; set; }
         public DbSet<Size> Sizes { get; set; }
@@ -39,7 +40,7 @@ namespace AppData.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Data Source=DESKTOP-A9URI7S\SQLEXPRESS;Initial Catalog=ShoesNET105_DBFirst3;Persist Security Info=True; User ID =sa; Password =123456");
+            optionsBuilder.UseSqlServer(@"Data Source=LAPTOP-46F72MJA\SQLEXPRESS;Initial Catalog=NET105_Nhom4_PMBanGiayTT;Integrated Security=True");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -22,6 +22,8 @@ namespace AppData.Models
         public Guid CustomerID { get; set; }
         public Guid VoucherID { get; set; }
         public Guid EmployeeID { get; set; }
+        public Guid PurchaseMethodID { get; set; }
+        public virtual PurchaseMethod PurchaseMethod { get; set; }
         public virtual Coupon Coupon { get; set; }
         public virtual Employee Employee { get; set; }
         public virtual Voucher Voucher { get; set; }

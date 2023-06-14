@@ -28,6 +28,7 @@ namespace AppData.Configurations
             builder.HasOne(c => c.Customer).WithMany(c => c.Bills).HasForeignKey(c => c.CustomerID);
             builder.HasOne(c => c.Voucher).WithMany(c => c.Bills).HasForeignKey(c => c.VoucherID);
             builder.HasOne(c => c.Coupon).WithMany(c => c.Bills).HasForeignKey(c => c.CouponID);
+            builder.HasOne(c => c.PurchaseMethod).WithMany(c => c.Bills).HasForeignKey(c => c.PurchaseMethodID);
         }
     }
 }

@@ -196,10 +196,11 @@ namespace AppView.Controllers
             return billCode;
         }
         [HttpPost]
-        public IActionResult CheckoutOk(List<CartItemViewModel> viewModel)
+        public IActionResult CheckoutOk(List<CartItemViewModel> viewModel, string HinhThucThanhToan, int shippingFee)
         {
             var userIdString = HttpContext.Session.GetString("UserId");
             var CustomerID = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
+            var HTThanhToan = _dBContext.PurchaseMethods.FirstOrDefault(c => c.MethodName == HinhThucThanhToan).PurchaseMethodID;
             if (CustomerID == Guid.Empty)
             {
                 return RedirectToAction("Login", "Customer");
@@ -214,7 +215,7 @@ namespace AppView.Controllers
             decimal totalPrice = 0;
             foreach (var item in cartItems)
             {
-                totalPrice += item.ShoesDetails.Price * item.Quantity;
+                totalPrice += (item.ShoesDetails.Price * item.Quantity) + shippingFee;
             }
             // Tạo đơn hàng
             var bill = new Bill
@@ -226,13 +227,14 @@ namespace AppView.Controllers
                 Status = 1,
                 Note = "",
                 SuccessDate = DateTime.Now,
-                ShippingCosts = 0,
+                ShippingCosts = shippingFee,
                 DeliveryDate = DateTime.Now,
                 CancelDate = DateTime.Now,
                 TotalPrice = totalPrice,
-                EmployeeID = Guid.Parse("899cd5fb-6a25-46ea-4507-08db5d8dd88e"),
-                CouponID = Guid.Parse("db9a5ee0-9a90-47b8-95c2-925b65f44087"),
-                VoucherID = Guid.Parse("c5c7648b-2bee-42c4-b0e3-a0a62e86988f")
+                EmployeeID = Guid.Parse("779ae3d8-6a02-46f1-bde2-960140a0e585"),
+                CouponID = Guid.Parse("2d029610-3101-4703-acc8-79b1ada581d6"),
+                VoucherID = Guid.Parse("9f86a42e-cfbe-4043-8d2d-8ebcea7f8fcd"),
+                PurchaseMethodID = HTThanhToan
             };
             _dBContext.Bills.Add(bill);
 
@@ -244,10 +246,9 @@ namespace AppView.Controllers
                     BillID = bill.BillID,
                     ShoesDetailsId = item.ShoesDetailsId,
                     Quantity = item.Quantity,
-                    Price = item.ShoesDetails.Price * item.Quantity
+                    Price = item.ShoesDetails.Price
                 };
                 _dBContext.BillDetails.Add(billDetail);
-
                 // Cập nhật số lượng sản phẩm
                 item.ShoesDetails.AvailableQuantity -= item.Quantity;
                 _dBContext.ShoesDetails.Update(item.ShoesDetails);

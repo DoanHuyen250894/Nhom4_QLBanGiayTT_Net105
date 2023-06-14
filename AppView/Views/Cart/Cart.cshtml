@@ -3,10 +3,12 @@
     ViewData["Title"] = "Giỏ hàng";
     // Tính toán tổng giá tiền
     decimal totalPrice = 0;
+    var totalWeight = 0;
     foreach (var item in Model)
     {
         totalPrice += item.Price * item.Quantity;
     }
+    var shippingFee = 0;
 }
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <link rel="stylesheet" href="~/css/giohang.css">
@@ -29,7 +31,10 @@
                         <div class="row">
                              @foreach (var item in Model)
                              {
-                                 <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
+                                 var defaultWeight = 500; // Khối lượng mặc định cho mỗi sản phẩm
+                                 var productWeight = defaultWeight * item.Quantity; // Khối lượng của sản phẩm
+                                 totalWeight += productWeight;
+                                    <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
                                      <!-- Image -->
                                      <div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
                                          <img src="@Url.Content("~/image/" + item.ProductImage)" class="w-100" alt="Blue Jeans Jacket" />
@@ -66,7 +71,7 @@
                                      <p class="text-start text-md-center">
                                           @{
                                               var priceItems = item.Price * item.Quantity;
-                                              <span class="total-price ms-auto">@priceItems.ToString("N0")đ</span>
+                                                  <span class="total-price ms-auto">@priceItems.ToString("N0")đ</span>
                                           }
                                      </p>
                                      <!-- Total Price -->
@@ -93,10 +98,58 @@
                    </div>
                    }
                 </div>
-                <div class="card mb-4" style="border: 1px solid white;">
-                    <div class="card-body">
-                        <p><strong>Favourites</strong></p>
-                        <p class="mb-0">There are no items saved to your favourites.</p>
+                <div id="cart-total-container" style="display:none;">
+                    <span name="TongKhoiLuong" class="cart-total-weight" id="khoiLuongSum">@totalWeight</span>
+                </div>
+                <div class="row" id="shipping-address-form-container" style="display:none;">
+                    <div class="col-md-12 mb-4">
+                        <div class="card mb-4">
+                            <div class="card-header py-3">
+                                <h5 class="mb-0">Địa chỉ nhận hàng</h5>
+                            </div>
+                            <div class="card-body">
+                                <form>
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" placeholder="Họ và tên" required>
+                                        <label for="floatingInputEmail">Họ và tên</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" placeholder="Số điện thoại" required>
+                                        <label for="floatingInputEmail">Số điện thoại</label>
+                                    </div>
+                                    <div class="row mb-4">
+                                        <div class="col">
+                                            <div class="form-floating mb-3">
+                                                <select class="form-control" id="ListTinh" onchange="fetchDistricts(this.value)">
+                                                    <option value="" disabled selected></option>
+                                                </select>
+                                                <label for="floatingInputEmail">Tỉnh/Thành Phố</label>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-floating mb-3">
+                                                <select class="form-control" id="ListQuanHuyen" onchange="calculateShippingFee(document.getElementById('ListPhuongXa').value, this.value); fetchWards(this.value)">
+                                                    <option value="" disabled selected></option>
+                                                </select>
+                                                <label for="floatingInputEmail">Quận/Huyện</label>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-floating mb-3">
+                                                <select class="form-control" id="ListPhuongXa" onchange="calculateShippingFee(this.value, document.getElementById('ListQuanHuyen').value)">
+                                                    <option value="" disabled selected></option>
+                                                </select>
+                                                <label for="select3">Xã/Phường</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" placeholder="Địa chỉ" required>
+                                        <label for="floatingInputEmail">Địa chỉ</label>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="card mb-4 mb-lg-0" style="border: 1px solid white;">
@@ -114,6 +167,159 @@
                     </div>
                 </div>
             </div>
+            <script>
+                // Function to fetch province data from API and populate the select element
+                function fetchProvinces() {
+                    // API endpoint URL
+                    const apiUrl = "https://online-gateway.ghn.vn/shiip/public-api/master-data/province";
+                    // Token
+                    const token = "6092d580-fde7-11ed-a967-deea53ba3605";
+                    // Create headers for the request
+                    const headers = {
+                        "Content-Type": "application/json",
+                        token: token
+                    };
+                    // Send GET request to the API
+                    fetch(apiUrl, {
+                        method: "GET",
+                        headers: headers
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            // Process the response data
+                            if (data && data.data) {
+                                const provinces = data.data;
+
+                                // Get the select element
+                                const selectElement = document.getElementById("ListTinh");
+
+                                // Clear any existing options
+                                selectElement.innerHTML = "";
+
+                                // Create and append option elements for each province
+                                provinces.forEach(province => {
+                                    const option = document.createElement("option");
+                                    option.value = province.ProvinceID;
+                                    option.textContent = province.ProvinceName;
+                                    selectElement.appendChild(option);
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error fetching provinces:", error);
+                        });
+                }
+                // Call the fetchProvinces function to populate the select box
+                fetchProvinces();
+            </script>
+            <script>
+                function fetchDistricts(province_id) {
+                    const url = `https://online-gateway.ghn.vn/shiip/public-api/master-data/district?province_id=${province_id}`;
+                    const token = '6092d580-fde7-11ed-a967-deea53ba3605';
+
+                    fetch(url, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'token': token
+                        }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            const districtSelect = document.getElementById('ListQuanHuyen');
+                            districtSelect.innerHTML = ''; // Clear previous options
+
+                            // Add default option
+                            const defaultOption = document.createElement('option');
+                            defaultOption.value = '';
+                            defaultOption.disabled = true;
+                            defaultOption.selected = true;
+                            districtSelect.appendChild(defaultOption);
+
+                            // Add districts to the dropdown list
+                            data.data.forEach(district => {
+                                const option = document.createElement('option');
+                                option.value = district.DistrictID;
+                                option.textContent = district.DistrictName;
+                                districtSelect.appendChild(option);
+                            });
+                        })
+                        .catch(error => console.log(error));
+                }
+                fetchDistricts();
+            </script>
+            <script>
+                function fetchWards(district_id) {
+                    const url = `https://online-gateway.ghn.vn/shiip/public-api/master-data/ward?district_id=${district_id}`;
+                    const token = '6092d580-fde7-11ed-a967-deea53ba3605';
+
+                    fetch(url, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'token': token
+                        }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            const wardSelect = document.getElementById('ListPhuongXa');
+                            wardSelect.innerHTML = ''; // Clear previous options
+
+                            // Add default option
+                            const defaultOption = document.createElement('option');
+                            defaultOption.value = '';
+                            defaultOption.disabled = true;
+                            defaultOption.selected = true;
+                            wardSelect.appendChild(defaultOption);
+
+                            // Add wards to the dropdown list
+                            data.data.forEach(ward => {
+                                const option = document.createElement('option');
+                                option.value = ward.WardCode;
+                                option.textContent = ward.WardName;
+                                wardSelect.appendChild(option);
+                            });
+                        })
+                        .catch(error => console.log(error));
+                }
+            </script>
+            <script>
+                function calculateShippingFee(to_ward_code, to_district_id) {
+                    var totalPriceElement = document.getElementById('totalPrice');
+                    var totalPriceText = totalPriceElement.innerText;
+                    var totalPrice = parseInt(totalPriceText.replace(/[^\d]/g, ''));
+
+                    var totalWeight = document.getElementById('khoiLuongSum');
+                    var totalWeightText = totalWeight.innerText;
+                    var totalWeightSum = parseInt(totalWeightText.replace(/[^\d]/g, ''));
+                    const url = `https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee?service_id=53321&insurance_value=${totalPrice}&coupon&to_ward_code=${to_ward_code}&to_district_id=${to_district_id}&from_district_id=3440&weight=${totalWeightSum}&length=38&width=15&height=15`;
+                    const token = '6092d580-fde7-11ed-a967-deea53ba3605';
+                    const shop_id = '4185066';
+
+                    fetch(url, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'token': token,
+                            'shop_id': shop_id
+                        }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log(data);
+                            const wardSelect = document.getElementById('phivanchuyen');
+                            wardSelect.innerHTML = data.data.total.toLocaleString('vi-VN') + "đ";
+                            // giá trị cho input
+                            var shippingFee = data.data.total;
+                            document.getElementById('shippingFee').value = shippingFee;
+                            //
+                            var totalOk = totalPrice + shippingFee;
+                            var tongTienElement = document.querySelector('[name="TongTien"]');
+                            tongTienElement.innerText = totalOk.toLocaleString('vi-VN') + "đ";
+                        })
+                        .catch(error => console.log(error));
+                }
+            </script>
             <div class="col-md-4">
                 <div class="card mb-4" style="border: 1px solid white;">
                     <div class="card-header py-3">
@@ -123,35 +329,36 @@
                         <div id="total-price">
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
-                                    Subtotal
+                                    Tổng giá sản phẩm
                                     <div id="cart-total-container">
-                                        <span class="cart-total-sub">@totalPrice.ToString("N0")đ</span>
+                                        <span class="cart-total-sub" id="totalPrice">@totalPrice.ToString("N0")đ</span>
                                     </div>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                    Estimated Delivery & Handling
-                                    <span>Free</span>
+                                    Phí vận chuyển
+                                    <span id="phivanchuyen">@Html.Raw(shippingFee)</span>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
                                     <div>
-                                        <strong>Total</strong>
+                                        <strong>Tổng</strong>
                                     </div>
                                     <div id="cart-total-container">
-                                        <span name="TongTien" class="cart-total-all" style="font-weight:bold;">@totalPrice.ToString("N0")đ</span>
+                                        <span name="TongTien" class="cart-total-all" style="font-weight:bold;"></span>
                                     </div>
                                 </li>
                             </ul>
-                            <hr />
+                            <hr style="margin-top: 104px;"/>
                             <h5>Thông Tin Thanh Toán</h5>
                             <form method="post" action="@Url.Action("CheckoutOk", "Cart")" id="checkout-form" style="margin-top:15px;">
+                                <input type="number" id="shippingFee" name="shippingFee" value="" style="display:none;">
                                 <div class="form-group">
                                     <input type="hidden" id="total-price" name="TongTien" value="">
                                 </div>
                                 <div class="form-group">
-                                    <input type="radio" id="paid" name="TrangThaiThanhToan" value="1" checked>
+                                    <input type="radio" id="paid" name="HinhThucThanhToan" value="Tại Quầy" checked>
                                     <label for="paid">Mua hàng tại quầy</label>
                                     <br />
-                                    <input type="radio" id="not-paid" name="TrangThaiThanhToan" value="0" disabled>
+                                    <input type="radio" id="not-paid1" name="HinhThucThanhToan" value="Giao Hàng">
                                     <label for="not-paid">Giao hàng</label>
                                 </div>
                                 <div class="form-group" style="margin-top:10px;">
@@ -176,6 +383,21 @@
                     $("#date").val(today).prop('disabled', true);
                 });
             </script>
+            <script>
+            $(document).ready(function () {
+                // Lắng nghe sự kiện khi radio button thay đổi
+                $('input[name="HinhThucThanhToan"]').change(function () {
+                    var shippingFormContainer = document.getElementById('shipping-address-form-container');
+                    if (this.value === 'Giao Hàng') {
+                        // Hiển thị form "Địa chỉ nhận hàng"
+                        shippingFormContainer.style.display = 'block';
+                    } else {
+                        // Ẩn form "Địa chỉ nhận hàng"
+                        shippingFormContainer.style.display = 'none';
+                    }
+                });
+            });
+        </script>
         </div>
     </div>
 </section>

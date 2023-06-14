@@ -204,5 +204,26 @@ namespace AppView.Controllers
 				}
 			}
 		}
-	}
+        public IActionResult Search(string name)
+        {
+            try
+            {
+				var products = _product.GetAllProducts().FirstOrDefault(c => c.Name == name);
+				var ShoesDT = _shoesDT.GetAllShoesDetails().FirstOrDefault(c => c.SizeID == products.ProductID);
+				if (ShoesDT != null)
+				{
+                    ViewBag.Name = name;
+                    return View(ShoesDT);
+                }
+                else
+                {
+                    return View("NotFound"); // Trả về một View "NotFound" khi không tìm thấy kết quả
+                }
+            }
+            catch (Exception)
+            {
+				return Content("CC");
+            }
+        }
+    }
 }
