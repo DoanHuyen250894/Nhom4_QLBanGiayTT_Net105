@@ -8,6 +8,7 @@ using Microsoft.CodeAnalysis.VisualBasic;
 using Microsoft.EntityFrameworkCore;
 using NuGet.Packaging;
 using System.Diagnostics;
+using System.Linq;
 using ErrorViewModel = AppView.Models.ErrorViewModel;
 
 namespace AppView.Controllers
@@ -211,26 +212,22 @@ namespace AppView.Controllers
 				}
 			}
 		}
-        public IActionResult Search(string name)
-        {
-            try
-            {
-				var products = _product.GetAllProducts().FirstOrDefault(c => c.Name == name);
-				var ShoesDT = _shoesDT.GetAllShoesDetails().FirstOrDefault(c => c.SizeID == products.ProductID);
-				if (ShoesDT != null)
-				{
-                    ViewBag.Name = name;
-                    return View(ShoesDT);
-                }
-                else
-                {
-                    return View("NotFound"); // Trả về một View "NotFound" khi không tìm thấy kết quả
-                }
-            }
-            catch (Exception)
-            {
-				return Content("CC");
-            }
-        }
+        //public IActionResult Search(string name)
+        //{
+        //    try
+        //    {
+        //        var products = _product.GetAllProducts().Where(p => p.Name.ToLower().Contains(name.ToLower())).ToList();
+        //        var productIds = products.Select(p => p.ProductID);
+        //        var shoesDetails = _shoesDT.GetAllShoesDetails().FirstOrDefault(c => productIds.Any(id => c.ProductID == id));
+        //        ViewBag.Name = name;
+        //        ViewBag.NameSP = name; // Gán giá trị cho ViewBag.NameSP
+
+        //        return View(shoesDetails);
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return Content("CC");
+        //    }
+        //}
     }
 }

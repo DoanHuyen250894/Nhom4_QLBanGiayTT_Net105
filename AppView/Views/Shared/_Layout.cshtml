@@ -43,7 +43,7 @@
 						   class="flex-no-grow flex-no-shrink relative py-2 px-4 leading-normal text-dark no-underline flex items-center">Introduce</a>
 						</div>
 					</div>
-					<a style="font-size: 11px; font-weight: bold;" asp-controller="Employee" asp-action="LogOut"
+					<a style="font-size: 11px; font-weight: bold;" asp-controller="Customer" asp-action="LogOut"
 				    class="flex-no-grow flex-no-shrink relative py-2 px-4 leading-normal text-dark no-underline flex items-center">Log Out
 					</a>
 				</nav>
@@ -99,7 +99,7 @@
 							<a class="nav-link active" aria-current="page" asp-area="" asp-controller="ShoesDetail" asp-action="GetAllShoesDetails">Session</a>
 						</li>
 						<li class="nav-item" style="padding-left: 15px;">
-							<a class="nav-link active" aria-current="page" asp-area="" asp-controller="Sole" asp-action="GetAllSole">Image</a>
+							<a class="nav-link active" aria-current="page" asp-area="" asp-controller="Cart" asp-action="ViewBill">BillDetails</a>
 						</li>
 						@if(role == "Admin")
 						{
@@ -111,7 +111,7 @@
 							<a class="nav-link active" aria-current="page" asp-area="" asp-controller="Home" asp-action="ListProduct">Sản phẩm</a>
 						</li>
 						<li class="nav-item" style="padding-left: 15px;">
-							<a class="nav-link active" aria-current="page" asp-area="" asp-controller="Home" asp-action="Admin">Admin</a>
+							<a class="nav-link active" aria-current="page" asp-area="" asp-controller="Image" asp-action="GetAllImge">Image</a>
 						</li>
 						@*						<li class="nav-item" style="padding-left: 15px;">
 						<a class="nav-link active" aria-current="page" asp-area="" asp-controller="Home" asp-action="ShowListFromSession">Lab 5_6</a>
@@ -119,7 +119,7 @@
 					</ul>
 					<form class="d-flex" role="search" style="padding-right: 30px;" method="get" action="@Url.Action("Search", "Home")">
 						<div class="src-box">
-							<input type="text" placeholder="@ViewBag.Name Search " Search"" id="search-input" name="name" value="@ViewBag.Name">
+							<input type="text" placeholder="@ViewBag.Name Search "Search"" id="search-input" name="name" value="@ViewBag.Name">
 							@*<input type="text" placeholder="Search" id="search-input" name="name">*@
 							<button type="submit"></button>
 						</div>
