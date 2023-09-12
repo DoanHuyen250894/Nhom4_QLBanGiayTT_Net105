@@ -212,22 +212,41 @@ namespace AppView.Controllers
 				}
 			}
 		}
-        //public IActionResult Search(string name)
+        //public async Task<IActionResult> Search(string name)
         //{
-        //    try
-        //    {
-        //        var products = _product.GetAllProducts().Where(p => p.Name.ToLower().Contains(name.ToLower())).ToList();
-        //        var productIds = products.Select(p => p.ProductID);
-        //        var shoesDetails = _shoesDT.GetAllShoesDetails().FirstOrDefault(c => productIds.Any(id => c.ProductID == id));
-        //        ViewBag.Name = name;
-        //        ViewBag.NameSP = name; // Gán giá trị cho ViewBag.NameSP
-
-        //        return View(shoesDetails);
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return Content("CC");
-        //    }
-        //}
+        //          var searchResults = await _shopDBContext.Products
+        //                .Where(p => p.Name.Contains(name)) // Điều kiện tìm kiếm
+        //                .Include(p => p.ShoesDetails) // Nếu bạn muốn bao gồm dữ liệu từ ShoesDetails
+        //                .ToListAsync();
+        //	return View(searchResults);
+        //      }
+        public IActionResult Search(string name)
+        {
+            var product = _shopDBContext.Products
+                .Include(p => p.ShoesDetails) // Bao gồm dữ liệu từ ShoesDetails nếu cần
+                .FirstOrDefault(p => p.Name.ToLower().Contains(name.ToLower()));
+			ViewBag.NameSP = product?.Name;
+            // Kiểm tra xem sản phẩm có tồn tại không
+            if (product != null)
+            {
+                // Lấy danh sách ShoesDetails
+                var shoesDetails = product.ShoesDetails.ToList();
+                // Duyệt qua danh sách ShoesDetails để kiểm tra hình ảnh
+                foreach (var item in shoesDetails)
+                {
+                    var image = _shopDBContext.Images.FirstOrDefault(c => c.ShoesDetailsID == item.ShoesDetailsId);
+                    if (image != null)
+                    {
+                        item.ImageUrl = image.Image1;
+                    }
+                }
+                return View(shoesDetails);
+            }
+            else
+            {
+				ViewBag.NameSP = name;
+                return View(new List<ShoesDetails>());
+            }
+        }
     }
 }

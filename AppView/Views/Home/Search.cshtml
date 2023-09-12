@@ -1,5 +1,4 @@
-﻿using AppData.Models;
-@model List<AppData.Models.ShoesDetails>
+﻿@model IEnumerable<AppData.Models.ShoesDetails>
 @{
 	ViewData["Title"] = "Search";
 }
@@ -212,7 +211,7 @@
 		<!-- Nội dung sản phẩm sẽ được tải lên tại đây -->
 		@if (Model.Count() == 0)
 		{
-			<h2 style="text-align:center; padding-top:50px;">We could not find anything for "@ViewBag.Name"</h2>
+			<h2 style="text-align:center; padding-top:50px;">Không tìm thấy sản phẩm cho "@ViewBag.NameSP"</h2>
 		}
 		else
 		{
@@ -268,7 +267,7 @@
 	</script>
 	<script>
 		$(document).ready(function () {
-			var searchTerm = '@ViewBag.Name';
+			var searchTerm = '@ViewBag.NameSP';
 			if (searchTerm != '') {
 				$('#search-input').val(searchTerm);
 			}
