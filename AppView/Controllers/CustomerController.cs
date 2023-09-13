@@ -277,7 +277,7 @@ namespace AppView.Controllers
         }
         public IActionResult LogOut()
         {
-            HttpContext.Session.Remove("FullName");
+            HttpContext.Session.Remove("UserName");
             return RedirectToAction("Login");
         }
     }

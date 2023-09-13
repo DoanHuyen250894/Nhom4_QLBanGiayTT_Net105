@@ -249,9 +249,6 @@ namespace AppView.Controllers
                     Price = item.ShoesDetails.Price
                 };
                 _dBContext.BillDetails.Add(billDetail);
-                // Cập nhật số lượng sản phẩm
-                item.ShoesDetails.AvailableQuantity -= item.Quantity;
-                _dBContext.ShoesDetails.Update(item.ShoesDetails);
             }
 
             // Lưu thay đổi vào cơ sở dữ liệu
@@ -261,8 +258,7 @@ namespace AppView.Controllers
             _dBContext.CartDetails.RemoveRange(cartItems);
             _dBContext.SaveChanges();
 
-            // Chuyển hướng sang trang cảm ơn
-            return Content("Thanh toán thành công");
+            return RedirectToAction("ViewBill");
         }
         [HttpPost]
         public IActionResult UpdateCartItemQuantity(Guid shoesDetailsId, int quantity)
