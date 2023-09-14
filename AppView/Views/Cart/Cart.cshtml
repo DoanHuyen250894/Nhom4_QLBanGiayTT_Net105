@@ -9,6 +9,7 @@
         totalPrice += item.Price * item.Quantity;
     }
     var shippingFee = 0;
+    var selectedShippingMethodID = 0;
 }
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <link rel="stylesheet" href="~/css/giohang.css">
@@ -71,7 +72,7 @@
                                      <p class="text-start text-md-center">
                                           @{
                                               var priceItems = item.Price * item.Quantity;
-                                                  <span class="total-price ms-auto">@priceItems.ToString("N0")đ</span>
+                                                                                                                                  <span class="total-price ms-auto">@priceItems.ToString("N0")đ</span>
                                           }
                                      </p>
                                      <!-- Total Price -->
@@ -145,8 +146,20 @@
                                     </div>
                                     <div class="form-floating mb-3">
                                         <input type="text" class="form-control" placeholder="Địa chỉ" required>
-                                        <label for="floatingInputEmail">Địa chỉ</label>
+                                        <label for="floatingInputEmail">Địa chỉ cụ thể (Số nhà, đường):</label>
                                     </div>
+                                    <div style="padding-right: 450px; display:none;" id="shippingOptionsDiv">
+                                        <label class="radio-button" style="font-size: 14px; display: inline-block;">
+                                            <input type="radio" name="example-radio" value="option1">
+                                            <span class="radio"></span>
+                                        </label>
+
+                                        <label class="radio-button" style="font-size: 14px; display:none;">
+                                            <input type="radio" name="example-radio" value="option2">
+                                            <span class="radio"></span>
+                                        </label>
+                                    </div>
+                                    <label id="deliveryDateLabel1"></label>
                                 </form>
                             </div>
                         </div>
@@ -167,6 +180,23 @@
                     </div>
                 </div>
             </div>
+            <script>
+                // Sử dụng sự kiện change để theo dõi sự thay đổi trong selection chọn xã
+                const phuongXaSelect = document.getElementById('ListPhuongXa');
+                phuongXaSelect.addEventListener('change', function () {
+                    // Kiểm tra xem xã đã được chọn hay chưa
+                    const selectedXa = phuongXaSelect.value;
+                    const shippingOptionsDiv = document.getElementById('shippingOptionsDiv');
+
+                    if (selectedXa) {
+                        // Nếu đã chọn xã, hiển thị radio button
+                        shippingOptionsDiv.style.display = 'block';
+                    } else {
+                        // Nếu xã chưa được chọn, ẩn radio button
+                        shippingOptionsDiv.style.display = 'none';
+                    }
+                });
+            </script>
             <script>
                 // Function to fetch province data from API and populate the select element
                 function fetchProvinces() {
@@ -284,6 +314,76 @@
                 }
             </script>
             <script>
+                function updateShippingMethods() {
+                    var toDistrict = document.getElementById('ListQuanHuyen').value;
+                    fetch(`https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/available-services?shop_id=4185066&from_district=3440&to_district=${toDistrict}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'token': '6092d580-fde7-11ed-a967-deea53ba3605'
+                        }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            var shippingMethods = data.data;
+                            var shippingOptionsDiv = document.getElementById('shippingOptionsDiv');
+
+                            // Cập nhật nội dung và style cho dòng đầu tiên
+                            var firstLabel = shippingOptionsDiv.querySelector('.radio-button:nth-child(1)');
+                            firstLabel.innerHTML = 'Hình thức vận chuyển: ' + shippingMethods[0].short_name;
+                            firstLabel.style.fontSize = '16px'; // Đặt kích thước font ở đây
+                            firstLabel.style.fontWeight = 'bold'; // Đặt kích thước font ở đây
+                            selectedShippingMethodID = shippingMethods[0].service_id;
+
+                            // Ẩn dòng thứ hai
+                            var secondLabel = shippingOptionsDiv.querySelector('.radio-button:nth-child(2)');
+                            secondLabel.style.display = 'none';
+
+                            // Hiển thị "shippingOptionsDiv" sau khi có dữ liệu
+                            shippingOptionsDiv.style.display = 'block';
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                }
+                // Gọi hàm updateShippingMethods() khi có sự thay đổi ở các textbox chọn địa chỉ
+                document.getElementById('ListQuanHuyen').addEventListener('change', updateShippingMethods);
+                // Đảm bảo gọi hàm updateShippingMethods() một lần ban đầu để hiển thị mặc định
+                updateShippingMethods();
+                //
+            </script>
+            <script>
+                // Hàm để lấy thời gian dự kiến nhận hàng dựa trên các giá trị được chọn từ các selection box
+                function getLeadTime() {
+                    // Lấy giá trị từ các selection box
+                    var toDistrict = document.getElementById('ListQuanHuyen').value;
+                    console.log(toDistrict);
+                    var toWardCode = document.getElementById('ListPhuongXa').value;
+                    console.log(toDistrictId);
+                    console.log(toWardCode);
+                    console.log(selectedShippingMethodID);
+
+                    return fetch(`https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/leadtime?from_district_id=3440&from_ward_code=13010&to_district_id=${toDistrictId}&to_ward_code=${toWardCode}&service_id=${selectedShippingMethodID}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'token': '6092d580-fde7-11ed-a967-deea53ba3605',
+                            'shop_id': '4185066'
+                        }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('ok');
+                            var shippingDate = data.data;
+                            return shippingDate; // Trả về giá trị để sử dụng trong `.then` sau này
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            return null; // Trả về null trong trường hợp lỗi
+                        });
+                }
+            </script>
+            <script>
                 function calculateShippingFee(to_ward_code, to_district_id) {
                     var totalPriceElement = document.getElementById('totalPrice');
                     var totalPriceText = totalPriceElement.innerText;
@@ -292,7 +392,7 @@
                     var totalWeight = document.getElementById('khoiLuongSum');
                     var totalWeightText = totalWeight.innerText;
                     var totalWeightSum = parseInt(totalWeightText.replace(/[^\d]/g, ''));
-                    const url = `https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee?service_id=53321&insurance_value=${totalPrice}&coupon&to_ward_code=${to_ward_code}&to_district_id=${to_district_id}&from_district_id=3440&weight=${totalWeightSum}&length=38&width=15&height=15`;
+                    const url = `https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee?service_id=${selectedShippingMethodID}&insurance_value=${totalPrice}&coupon&to_ward_code=${to_ward_code}&to_district_id=${to_district_id}&from_district_id=3440&weight=${totalWeightSum}&length=38&width=15&height=15`;
                     const token = '6092d580-fde7-11ed-a967-deea53ba3605';
                     const shop_id = '4185066';
 
@@ -363,7 +463,7 @@
                                 </div>
                                 <div class="form-group" style="margin-top:10px;">
                                     <label for="date">Ngày tạo đơn hàng:</label>
-                                    <input type="date" class="form-control" id="date" name="date" required>
+                                    <input type="date" class="form-control" id="dateCreate" name="date" required>
                                 </div>
                                 <button class="btn1 btn-danger text mr-2 px-4" type="submit"
                                         style="width: 355px; height: 45px; border-radius: 25px; color: white; background-color: black; margin-top:15px;">
@@ -380,7 +480,7 @@
                     const today = new Date().toISOString().substr(0, 10);
 
                     // Gán ngày hiện tại vào trường Ngày tạo và disable trường
-                    $("#date").val(today).prop('disabled', true);
+                    $("#dateCreate").val(today).prop('disabled', true);
                 });
             </script>
             <script>
