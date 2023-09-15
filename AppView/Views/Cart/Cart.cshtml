@@ -72,7 +72,7 @@
                                      <p class="text-start text-md-center">
                                           @{
                                               var priceItems = item.Price * item.Quantity;
-                                                                                                                                  <span class="total-price ms-auto">@priceItems.ToString("N0")đ</span>
+                                                                                                                                                                  <span class="total-price ms-auto">@priceItems.ToString("N0")đ</span>
                                           }
                                      </p>
                                      <!-- Total Price -->
@@ -148,8 +148,8 @@
                                         <input type="text" class="form-control" placeholder="Địa chỉ" required>
                                         <label for="floatingInputEmail">Địa chỉ cụ thể (Số nhà, đường):</label>
                                     </div>
-                                    <div style="padding-right: 450px; display:none;" id="shippingOptionsDiv">
-                                        <label class="radio-button" style="font-size: 14px; display: inline-block;">
+                                    <div style="padding-right: 300px; display:none;" id="shippingOptionsDiv">
+                                        <label class="radio-button" style="font-size: 14px; display: inline;">
                                             <input type="radio" name="example-radio" value="option1">
                                             <span class="radio"></span>
                                         </label>
@@ -159,7 +159,10 @@
                                             <span class="radio"></span>
                                         </label>
                                     </div>
-                                    <label id="deliveryDateLabel1"></label>
+                                    <div>
+                                        <img id="imageShipper" src="~/image/icons8-delivery-25.png" style="padding-left: 10px; display:none;"/>
+                                        <label id="deliveryDateLabel1"></label>
+                                    </div>
                                 </form>
                             </div>
                         </div>
@@ -187,13 +190,16 @@
                     // Kiểm tra xem xã đã được chọn hay chưa
                     const selectedXa = phuongXaSelect.value;
                     const shippingOptionsDiv = document.getElementById('shippingOptionsDiv');
+                    const imageShip = document.getElementById('imageShipper');
 
                     if (selectedXa) {
                         // Nếu đã chọn xã, hiển thị radio button
                         shippingOptionsDiv.style.display = 'block';
+                        imageShip.style.display = 'inline-block';
                     } else {
                         // Nếu xã chưa được chọn, ẩn radio button
                         shippingOptionsDiv.style.display = 'none';
+                        imageShip.style.display = 'none';
                     }
                 });
             </script>
@@ -314,8 +320,10 @@
                 }
             </script>
             <script>
-                function updateShippingMethods() {
+                // Hàm để cập nhật hình thức vận chuyển và thời gian dự kiến
+                function updateShippingOptions() {
                     var toDistrict = document.getElementById('ListQuanHuyen').value;
+                    // Gọi API để cập nhật hình thức vận chuyển
                     fetch(`https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/available-services?shop_id=4185066&from_district=3440&to_district=${toDistrict}`, {
                         method: 'GET',
                         headers: {
@@ -328,41 +336,68 @@
                             var shippingMethods = data.data;
                             var shippingOptionsDiv = document.getElementById('shippingOptionsDiv');
 
-                            // Cập nhật nội dung và style cho dòng đầu tiên
+                            // Cập nhật hình thức vận chuyển
                             var firstLabel = shippingOptionsDiv.querySelector('.radio-button:nth-child(1)');
                             firstLabel.innerHTML = 'Hình thức vận chuyển: ' + shippingMethods[0].short_name;
-                            firstLabel.style.fontSize = '16px'; // Đặt kích thước font ở đây
-                            firstLabel.style.fontWeight = 'bold'; // Đặt kích thước font ở đây
+                            firstLabel.style.fontSize = '16px';
+                            firstLabel.style.fontWeight = 'bold';
                             selectedShippingMethodID = shippingMethods[0].service_id;
-
+                            console.log(selectedShippingMethodID);
                             // Ẩn dòng thứ hai
                             var secondLabel = shippingOptionsDiv.querySelector('.radio-button:nth-child(2)');
                             secondLabel.style.display = 'none';
 
                             // Hiển thị "shippingOptionsDiv" sau khi có dữ liệu
                             shippingOptionsDiv.style.display = 'block';
+
+                            // Gọi hàm tính toán ngày nhận hàng dự kiến
+                            calculateDeliveryDate();
                         })
                         .catch(error => {
                             console.error('Error:', error);
                         });
                 }
-                // Gọi hàm updateShippingMethods() khi có sự thay đổi ở các textbox chọn địa chỉ
-                document.getElementById('ListQuanHuyen').addEventListener('change', updateShippingMethods);
-                // Đảm bảo gọi hàm updateShippingMethods() một lần ban đầu để hiển thị mặc định
-                updateShippingMethods();
-                //
-            </script>
-            <script>
-                // Hàm để lấy thời gian dự kiến nhận hàng dựa trên các giá trị được chọn từ các selection box
-                function getLeadTime() {
-                    // Lấy giá trị từ các selection box
-                    var toDistrict = document.getElementById('ListQuanHuyen').value;
-                    console.log(toDistrict);
-                    var toWardCode = document.getElementById('ListPhuongXa').value;
-                    console.log(toDistrictId);
-                    console.log(toWardCode);
-                    console.log(selectedShippingMethodID);
+                // Sự kiện khi có sự thay đổi ở các textbox chọn địa chỉ hoặc khi trang web được tải lần đầu
+                document.getElementById('ListQuanHuyen').addEventListener('change', updateShippingOptions);
+                document.getElementById('ListPhuongXa').addEventListener('change', updateShippingOptions);
 
+                // Hàm tính toán ngày nhận hàng dự kiến
+                function calculateDeliveryDate() {
+                    // Gọi hàm getLeadTime() để lấy thời gian dự kiến nhận hàng
+                    getLeadTime().then(leadTime => {
+                        if (leadTime !== null) {
+                            // Thời điểm Epoch (ngày 1 tháng 1 năm 1970) theo múi giờ UTC
+                            var epochTimeUTC = new Date("1970-01-01T00:00:00Z");
+
+                            // Chuyển leadTime thành mili giây và thêm vào thời điểm Epoch theo múi giờ UTC
+                            var deliveryDateUTC = new Date(epochTimeUTC.getTime() + (leadTime * 1000));
+
+                            // Điều chỉnh thời gian dự kiến nhận hàng sang múi giờ Việt Nam (UTC+7)
+                            var deliveryDateVietnam = new Date(deliveryDateUTC.getTime() + (7 * 60 * 60 * 1000));
+
+                            // Trích xuất ngày, tháng và năm từ thời gian dự kiến
+                            var day = deliveryDateVietnam.getDate();
+                            var month = deliveryDateVietnam.getMonth() + 1; // Tháng trong JavaScript bắt đầu từ 0, cần cộng thêm 1.
+                            var year = deliveryDateVietnam.getFullYear();
+
+                            // Tạo chuỗi định dạng "dd-mm-yyyy"
+                            var formattedDate = day + '-' + (month < 10 ? '0' : '') + month + '-' + year;
+
+                            var deliveryDateLabel = document.getElementById('deliveryDateLabel1');
+                            deliveryDateLabel.innerHTML = 'Ngày nhận hàng dự kiến: ' + formattedDate;
+                            deliveryDateLabel.style.paddingLeft = '10px';
+                            deliveryDateLabel.style.paddingTop = '10px';
+                            deliveryDateLabel.style.fontWeight = 'bold';
+                        }
+                    });
+                }
+
+                // Hàm để lấy thời gian dự kiến nhận hàng
+                function getLeadTime() {
+                    var toDistrictId = document.getElementById('ListQuanHuyen').value;
+                    console.log(toDistrictId);
+                    var toWardCode = document.getElementById('ListPhuongXa').value;
+                    console.log(toWardCode);
                     return fetch(`https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/leadtime?from_district_id=3440&from_ward_code=13010&to_district_id=${toDistrictId}&to_ward_code=${toWardCode}&service_id=${selectedShippingMethodID}`, {
                         method: 'GET',
                         headers: {
@@ -373,13 +408,12 @@
                     })
                         .then(response => response.json())
                         .then(data => {
-                            console.log('ok');
-                            var shippingDate = data.data;
-                            return shippingDate; // Trả về giá trị để sử dụng trong `.then` sau này
+                            console.log(data.data.leadtime);
+                            return data.data.leadtime;
                         })
                         .catch(error => {
                             console.error('Error:', error);
-                            return null; // Trả về null trong trường hợp lỗi
+                            return null;
                         });
                 }
             </script>
